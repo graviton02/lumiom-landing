@@ -121,17 +121,26 @@ export default function Home() {
         </div>
 
         {/* ── Right panel: Photo placeholder + Quote ── */}
-        <div className="relative order-1 lg:order-2 flex flex-col justify-center px-8 sm:px-12 md:px-16 lg:px-16 xl:px-20 py-16 lg:py-20 bg-cream">
-          <div className="hero-photo flex flex-col items-start gap-10 max-w-lg lg:max-w-xl">
+        <div className="relative order-1 lg:order-2 flex flex-col justify-center px-8 sm:px-12 md:px-16 lg:px-16 xl:px-20 py-16 lg:py-20 bg-cream overflow-hidden">
+          {/* Decorative circle — peeks behind the photo */}
+          <div className="absolute -right-16 top-[15%] w-[220px] h-[220px] rounded-full bg-orange/[0.08] hidden lg:block" />
+
+          <div className="hero-photo relative flex flex-col items-start gap-10 max-w-lg lg:max-w-xl">
             {/* Image placeholder */}
-            <div className="w-full aspect-[4/3] rounded-2xl bg-navy/[0.05] border-2 border-dashed border-navy/[0.1] flex items-center justify-center">
+            <div className="relative w-full aspect-[4/3] rounded-2xl bg-navy/[0.05] border-2 border-dashed border-navy/[0.1] flex items-center justify-center">
               <span className="text-navy/20 text-sm font-medium tracking-wide uppercase">
                 Photo / Video
               </span>
+              {/* Circle overlapping photo corner */}
+              <div className="absolute -top-10 -right-10 w-[140px] h-[140px] rounded-full bg-orange/[0.1]" />
             </div>
 
             {/* Quote + attribution */}
-            <div className="flex flex-col gap-5 w-full">
+            <div className="relative flex flex-col gap-5 w-full">
+              {/* Large decorative quotation mark */}
+              <span className="absolute -top-10 -left-4 font-serif text-[120px] leading-none text-orange/[0.12] select-none" aria-hidden="true">
+                &ldquo;
+              </span>
               <div className="w-10 h-[3px] bg-orange rounded-full" />
               <blockquote className="font-serif text-[26px] sm:text-[30px] lg:text-[32px] leading-[1.3] text-navy/80 italic">
                 &ldquo;Industrial enterprises have spent 25 years dispersing
@@ -353,14 +362,7 @@ export default function Home() {
           FOOTER
           ═══════════════════════════════════════════ */}
       <footer className="py-10 px-8 sm:px-12 md:px-16 lg:px-24 bg-navy">
-        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
-          <Image
-            src="/lumiom-ai-logo.png"
-            alt="Lumiom AI"
-            width={110}
-            height={28}
-            className="opacity-40 brightness-[3]"
-          />
+        <div className="max-w-5xl mx-auto text-center">
           <p className="text-white/30 text-sm">
             &copy; 2026 Lumiom AI. All rights reserved.
           </p>
