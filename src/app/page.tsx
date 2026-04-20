@@ -419,20 +419,17 @@ export default function Home() {
               </p>
 
               <blockquote className="font-serif text-[22px] sm:text-[26px] md:text-[28px] leading-[1.3] text-navy/85 italic">
-                &ldquo;Lumiom helped me build the first AI strategy for
-                Nexteer&nbsp;&mdash; and we are now piloting v1 of the Lumiom
-                platform together.&rdquo;
+                &ldquo;Lumiom helped me build the first AI strategy for my
+                enterprise&nbsp;&mdash; and we are now piloting v1 of the
+                Lumiom platform together.&rdquo;
               </blockquote>
 
               <div className="mt-6">
-                <p className="text-[15px] font-semibold text-navy">
-                  Darlene Taylor
+                <p className="text-[15px] font-semibold text-navy/45">
+                  [ Name &mdash; pending approval ]
                 </p>
-                <p className="text-[13px] text-text-secondary mt-0.5">
-                  CIO, Nexteer{" "}
-                  <span className="text-navy/35">
-                    (title &amp; company to be confirmed)
-                  </span>
+                <p className="text-[13px] text-navy/35 mt-0.5">
+                  [ Title &middot; Organization &mdash; pending approval ]
                 </p>
               </div>
             </div>
