@@ -23,6 +23,7 @@
   --color-text-secondary: var(--text-secondary);
   --font-sans: var(--font-dm-sans);
   --font-serif: var(--font-instrument);
+  --font-mono: var(--font-ibm-plex-mono);
 }
 
 html {
@@ -104,6 +105,41 @@ body {
 .reveal.revealed {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* ═══════════════════════════════
+   Platform (V2) hero animations
+   ═══════════════════════════════ */
+.platform-kicker {
+  animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
+}
+.platform-headline {
+  animation: fadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+}
+.platform-subhead {
+  animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.55s both;
+}
+.platform-ctas {
+  animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.75s both;
+}
+.platform-ticker {
+  animation: fadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.95s both;
+}
+
+@keyframes livePulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+.live-dot {
+  animation: livePulse 1.8s ease-in-out infinite;
+}
+
+/* Grid overlay used by Platform hero */
+.platform-grid-bg {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 56px 56px;
 }
 
 /* ═══════════════════════════════

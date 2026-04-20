@@ -1,8 +1,17 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { Play, ArrowDown, ArrowRight, Lightbulb, Blocks, Globe, Server, Building2 } from "lucide-react";
+import {
+  Play,
+  ArrowDown,
+  ArrowRight,
+  Lightbulb,
+  Blocks,
+  Globe,
+  Server,
+  Building2,
+} from "lucide-react";
 
 /* ─────────────────────────────────────────────
    Scroll reveal wrapper
@@ -47,122 +56,148 @@ function Reveal({
    Data
    ───────────────────────────────────────────── */
 const silos = [
-  { label: "Strategy Consultants", line: "Intelligence built, presented — then leaves.", color: "#E86C3A", icon: Lightbulb },
-  { label: "System Integrators", line: "Transformation knowledge lives in their methodology, not yours.", color: "#8B6CC1", icon: Blocks },
-  { label: "BPO & Outsourcing", line: "Process execution knowledge dispersed to offshore centers.", color: "#4A7DC7", icon: Globe },
-  { label: "IT Services", line: "Systems knowledge held by the outsourcer, not the owner.", color: "#2A9D8F", icon: Server },
-  { label: "The Enterprise", line: "Holds the bill. Doesn't own the intelligence. Calls them again.", color: "#0F1729", icon: Building2 },
+  {
+    label: "Strategy Consultants",
+    line: "Intelligence built, presented — then leaves.",
+    color: "#E86C3A",
+    icon: Lightbulb,
+  },
+  {
+    label: "System Integrators",
+    line: "Transformation knowledge lives in their methodology, not yours.",
+    color: "#8B6CC1",
+    icon: Blocks,
+  },
+  {
+    label: "Business Process Outsourcing",
+    line: "Process execution knowledge dispersed to offshore centers.",
+    color: "#4A7DC7",
+    icon: Globe,
+  },
+  {
+    label: "IT Services",
+    line: "Systems knowledge held by the outsourcer, not the owner.",
+    color: "#2A9D8F",
+    icon: Server,
+  },
+  {
+    label: "The Enterprise",
+    line: "Holds the bill. Doesn't own the intelligence. Calls them again.",
+    color: "#0F1729",
+    icon: Building2,
+  },
 ];
 
 const functions = ["Operations", "Supply Chain", "Finance", "Commercial"];
+
+/* ─────────────────────────────────────────────
+   Hero view toggle (small, top-right, theme-aware)
+   ───────────────────────────────────────────── */
+type HeroView = "thesis" | "platform";
+
+function HeroToggle({
+  view,
+  setView,
+  dark = false,
+}: {
+  view: HeroView;
+  setView: (v: HeroView) => void;
+  dark?: boolean;
+}) {
+  const baseText = dark ? "text-white/55" : "text-navy/55";
+  const activeBg = dark ? "bg-white/10 text-white" : "bg-navy/90 text-cream";
+  const border = dark ? "border-white/15" : "border-navy/12";
+
+  return (
+    <div
+      className={`inline-flex items-center gap-0 rounded-full border ${border} p-0.5 font-mono text-[10px] uppercase tracking-[0.18em] backdrop-blur-sm`}
+      role="tablist"
+      aria-label="Hero view"
+    >
+      <button
+        type="button"
+        role="tab"
+        aria-selected={view === "thesis"}
+        onClick={() => setView("thesis")}
+        className={`px-3 py-1.5 rounded-full transition-colors ${
+          view === "thesis" ? activeBg : `${baseText} hover:opacity-100`
+        }`}
+      >
+        Thesis
+      </button>
+      <button
+        type="button"
+        role="tab"
+        aria-selected={view === "platform"}
+        onClick={() => setView("platform")}
+        className={`px-3 py-1.5 rounded-full transition-colors ${
+          view === "platform" ? activeBg : `${baseText} hover:opacity-100`
+        }`}
+      >
+        Platform
+      </button>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   Top-right nav: Contact · Request Demo · Toggle
+   Theme-aware; rendered inside each hero variant.
+   ───────────────────────────────────────────── */
+function HeroTopNav({
+  view,
+  setView,
+  dark = false,
+}: {
+  view: HeroView;
+  setView: (v: HeroView) => void;
+  dark?: boolean;
+}) {
+  const linkBase = dark
+    ? "text-white/70 hover:text-white"
+    : "text-navy/70 hover:text-navy";
+  const demoBase = dark
+    ? "border-white/20 text-white hover:bg-white/10"
+    : "border-navy/15 text-navy hover:bg-navy/[0.04]";
+
+  return (
+    <div className="absolute top-6 right-6 sm:top-8 sm:right-8 lg:top-10 lg:right-12 z-40 flex items-center gap-3 sm:gap-4">
+      <a
+        href="mailto:ask@lumiom.ai"
+        className={`hidden sm:inline-flex text-[12px] font-medium tracking-wide transition-colors ${linkBase}`}
+      >
+        Contact
+      </a>
+      <a
+        href="mailto:demo@lumiom.ai"
+        className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-[12px] font-semibold tracking-wide transition-colors ${demoBase}`}
+      >
+        Request Demo
+        <ArrowRight className="w-3 h-3" />
+      </a>
+      <HeroToggle view={view} setView={setView} dark={dark} />
+    </div>
+  );
+}
 
 /* ═════════════════════════════════════════════════════════════════
    PAGE
    ═════════════════════════════════════════════════════════════════ */
 export default function Home() {
+  const [view, setView] = useState<HeroView>("thesis");
+
   return (
     <main className="overflow-x-hidden">
       {/* ═══════════════════════════════════════════
-          SECTION 1 — HERO: Founder + Thesis
+          SECTION 1 — HERO (with view toggle)
           ═══════════════════════════════════════════ */}
-      <section className="relative min-h-screen grid grid-cols-1 lg:grid-cols-[1.15fr_1fr]">
-        {/* Left accent line */}
-        <div className="hero-accent absolute left-0 top-0 bottom-0 w-[3px] bg-orange z-20 hidden lg:block" />
-
-        {/* ── Left panel: Copy ── */}
-        <div className="relative z-10 flex flex-col justify-center px-8 sm:px-12 md:px-16 lg:px-24 py-32 lg:py-20 order-2 lg:order-1 bg-cream">
-          {/* Logo */}
-          <div className="hero-logo absolute top-8 left-8 sm:left-12 md:left-16 lg:left-24">
-            <Image
-              src="/lumiom-ai-logo.png"
-              alt="Lumiom AI"
-              width={150}
-              height={38}
-              priority
-            />
-          </div>
-
-          {/* Eyebrow */}
-          <p className="hero-eyebrow text-[11px] font-semibold tracking-[0.3em] text-text-secondary uppercase mb-5">
-            A perspective by Mamatha Chamarthi
-          </p>
-
-          {/* Headline */}
-          <h1 className="hero-headline font-serif text-[36px] sm:text-[44px] md:text-[50px] lg:text-[56px] leading-[1.08] text-navy mb-7">
-            The Way Companies
-            <br className="hidden sm:block" /> Make Decisions
-            <br className="hidden sm:block" /> Is <em>Broken</em>
-          </h1>
-
-          {/* Subheadline */}
-          <p className="hero-subhead text-base md:text-[17px] text-text-secondary leading-relaxed max-w-md mb-10">
-            $1.6 trillion lost annually to failed transformations. 70&ndash;88%
-            of programs never deliver. A perspective on why&nbsp;&mdash; and
-            what needs to change.
-          </p>
-
-          {/* CTAs */}
-          <div className="hero-ctas flex flex-col sm:flex-row gap-3">
-            <a
-              href="#problem"
-              className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-orange text-white text-[15px] font-semibold rounded-lg hover:bg-orange-light transition-all duration-300 shadow-[0_2px_16px_rgba(232,108,58,0.25)] hover:shadow-[0_4px_24px_rgba(232,108,58,0.35)] hover:-translate-y-px"
-            >
-              Read the Perspective
-              <ArrowDown className="w-4 h-4" />
-            </a>
-            <a
-              href="#"
-              className="inline-flex items-center justify-center gap-2 px-7 py-3.5 border border-navy/10 text-navy text-[15px] font-semibold rounded-lg hover:bg-navy/[0.03] transition-all duration-300"
-            >
-              <Play className="w-4 h-4" />
-              Watch 2-Min Brief
-            </a>
-          </div>
-        </div>
-
-        {/* ── Right panel: Photo placeholder + Quote ── */}
-        <div className="relative order-1 lg:order-2 flex flex-col justify-center px-8 sm:px-12 md:px-16 lg:px-16 xl:px-20 py-16 lg:py-20 bg-cream overflow-hidden">
-          {/* Decorative circle — peeks behind the photo */}
-          <div className="absolute -right-16 top-[15%] w-[220px] h-[220px] rounded-full bg-orange/[0.08] hidden lg:block" />
-
-          <div className="hero-photo relative flex flex-col items-start gap-10 max-w-lg lg:max-w-xl">
-            {/* Image placeholder */}
-            <div className="relative w-full aspect-[4/3] rounded-2xl bg-navy/[0.05] border-2 border-dashed border-navy/[0.1] flex items-center justify-center">
-              <span className="text-navy/20 text-sm font-medium tracking-wide uppercase">
-                Photo / Video
-              </span>
-              {/* Circle overlapping photo corner */}
-              <div className="absolute -top-10 -right-10 w-[140px] h-[140px] rounded-full bg-orange/[0.1]" />
-            </div>
-
-            {/* Quote + attribution */}
-            <div className="relative flex flex-col gap-5 w-full">
-              {/* Large decorative quotation mark */}
-              <span className="absolute -top-10 -left-4 font-serif text-[120px] leading-none text-orange/[0.12] select-none" aria-hidden="true">
-                &ldquo;
-              </span>
-              <div className="w-10 h-[3px] bg-orange rounded-full" />
-              <blockquote className="font-serif text-[26px] sm:text-[30px] lg:text-[32px] leading-[1.3] text-navy/80 italic">
-                &ldquo;Industrial enterprises have spent 25 years dispersing
-                their intelligence&nbsp;&mdash; to consultants, integrators, and
-                outsourcers. They hold the bill. They don&apos;t own the
-                intelligence.&rdquo;
-              </blockquote>
-              <div className="pt-1">
-                <p className="text-[16px] font-semibold text-navy">
-                  Mamatha Chamarthi
-                </p>
-                <p className="text-[13px] text-text-secondary mt-0.5">
-                  Founder &amp; CEO, Lumiom AI
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Grain */}
-        <div className="grain absolute inset-0 pointer-events-none z-[15]" />
-      </section>
+      <div key={view}>
+        {view === "thesis" ? (
+          <HeroThesis view={view} setView={setView} />
+        ) : (
+          <HeroPlatform view={view} setView={setView} />
+        )}
+      </div>
 
       {/* ═══════════════════════════════════════════
           SECTION 2 — THE PROBLEM
@@ -208,7 +243,7 @@ export default function Home() {
                       />
                     </div>
                     <div>
-                      <p className="font-semibold text-navy text-[17px] mb-1.5">
+                      <p className="font-semibold text-navy text-[17px] mb-1.5 leading-tight">
                         {silo.label}
                       </p>
                       <p className="text-text-secondary text-[14px] leading-relaxed">
@@ -224,7 +259,7 @@ export default function Home() {
       </section>
 
       {/* ═══════════════════════════════════════════
-          SECTION 3 — THE INSIGHT
+          SECTION 3 — THE IMPERATIVE
           ═══════════════════════════════════════════ */}
       <section className="relative py-24 md:py-32 lg:py-40 px-8 sm:px-12 md:px-16 lg:px-24 bg-navy overflow-hidden">
         {/* Orange accent bar */}
@@ -261,6 +296,7 @@ export default function Home() {
 
       {/* ═══════════════════════════════════════════
           SECTION 4 — THE SOLUTION
+          (headline now leads with Industrial AI Operating Platform)
           ═══════════════════════════════════════════ */}
       <section className="relative py-24 md:py-32 lg:py-36 px-8 sm:px-12 md:px-16 lg:px-24 bg-warm-white">
         <div className="max-w-4xl mx-auto text-center">
@@ -271,14 +307,20 @@ export default function Home() {
           </Reveal>
 
           <Reveal delay={100}>
-            <h2 className="font-serif text-[32px] sm:text-[40px] md:text-[44px] lg:text-[48px] leading-[1.1] text-navy mb-6">
-              Efficiency First. Then Transformation.
+            <h2 className="font-serif text-[32px] sm:text-[40px] md:text-[46px] lg:text-[52px] leading-[1.08] text-navy mb-5">
+              The Industrial AI
               <br />
-              <em>Intelligence That Never Leaves.</em>
+              Operating <em>Platform.</em>
             </h2>
           </Reveal>
 
-          <Reveal delay={200}>
+          <Reveal delay={180}>
+            <p className="font-mono text-[11px] sm:text-xs tracking-[0.24em] uppercase text-orange/90 mb-8">
+              Continuous Horizontal Intelligence
+            </p>
+          </Reveal>
+
+          <Reveal delay={250}>
             <p className="text-base md:text-[17px] text-text-secondary leading-relaxed max-w-xl mx-auto mb-20">
               Lumiom is the first platform that reassembles your enterprise
               intelligence&nbsp;&mdash; continuous, horizontal, and
@@ -288,7 +330,7 @@ export default function Home() {
           </Reveal>
 
           {/* ── System diagram ── */}
-          <Reveal delay={300}>
+          <Reveal delay={350}>
             <div className="flex flex-col items-center">
               {/* Top: 4 function boxes */}
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 w-full max-w-[620px]">
@@ -343,11 +385,11 @@ export default function Home() {
             </div>
           </Reveal>
 
-          {/* End CTA */}
-          <Reveal delay={400}>
+          {/* End CTA — wired to demo */}
+          <Reveal delay={450}>
             <div className="mt-20">
               <a
-                href="#"
+                href="mailto:demo@lumiom.ai"
                 className="inline-flex items-center gap-2.5 px-8 py-4 bg-navy text-white text-[15px] font-semibold rounded-lg hover:bg-navy-light transition-all duration-300 shadow-[0_2px_16px_rgba(15,23,41,0.18)] hover:shadow-[0_4px_24px_rgba(15,23,41,0.28)] hover:-translate-y-px"
               >
                 Let&apos;s Talk
@@ -359,15 +401,311 @@ export default function Home() {
       </section>
 
       {/* ═══════════════════════════════════════════
+          SECTION 5 — TESTIMONIAL PLACEHOLDER (draft)
+          Darlene Taylor, pending approval via Mamatha.
+          ═══════════════════════════════════════════ */}
+      <section className="relative py-20 md:py-24 lg:py-28 px-8 sm:px-12 md:px-16 lg:px-24 bg-cream">
+        <div className="max-w-3xl mx-auto">
+          <Reveal>
+            <div className="relative rounded-2xl border border-dashed border-navy/15 bg-white/60 p-8 md:p-10">
+              {/* Draft badge */}
+              <span className="absolute top-4 right-4 inline-flex items-center gap-1.5 rounded-full border border-orange/30 bg-orange/10 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-orange">
+                <span className="h-1.5 w-1.5 rounded-full bg-orange" />
+                Draft · pending approval
+              </span>
+
+              <p className="font-mono text-[11px] tracking-[0.28em] text-navy/40 uppercase mb-5">
+                Early Partner
+              </p>
+
+              <blockquote className="font-serif text-[22px] sm:text-[26px] md:text-[28px] leading-[1.3] text-navy/85 italic">
+                &ldquo;Lumiom helped me build the first AI strategy for
+                Nexteer&nbsp;&mdash; and we are now piloting v1 of the Lumiom
+                platform together.&rdquo;
+              </blockquote>
+
+              <div className="mt-6">
+                <p className="text-[15px] font-semibold text-navy">
+                  Darlene Taylor
+                </p>
+                <p className="text-[13px] text-text-secondary mt-0.5">
+                  CIO, Nexteer{" "}
+                  <span className="text-navy/35">
+                    (title &amp; company to be confirmed)
+                  </span>
+                </p>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════
           FOOTER
           ═══════════════════════════════════════════ */}
       <footer className="py-10 px-8 sm:px-12 md:px-16 lg:px-24 bg-navy">
-        <div className="max-w-5xl mx-auto text-center">
+        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
           <p className="text-white/30 text-sm">
             &copy; 2026 Lumiom AI. All rights reserved.
           </p>
+          <div className="flex items-center gap-5 text-[13px]">
+            <a
+              href="mailto:ask@lumiom.ai"
+              className="text-white/55 hover:text-white transition-colors"
+            >
+              ask@lumiom.ai
+            </a>
+            <span className="text-white/20">·</span>
+            <a
+              href="mailto:demo@lumiom.ai"
+              className="text-white/55 hover:text-white transition-colors"
+            >
+              demo@lumiom.ai
+            </a>
+          </div>
         </div>
       </footer>
     </main>
+  );
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   HERO VIEW A — THESIS (editorial perspective, existing design
+   updated with tagline, network image, extended quote)
+   ═════════════════════════════════════════════════════════════════ */
+function HeroThesis({
+  view,
+  setView,
+}: {
+  view: HeroView;
+  setView: (v: HeroView) => void;
+}) {
+  return (
+    <section className="relative min-h-screen grid grid-cols-1 lg:grid-cols-[1.15fr_1fr]">
+      {/* Persistent top-right nav */}
+      <HeroTopNav view={view} setView={setView} dark={false} />
+
+      {/* Left accent line */}
+      <div className="hero-accent absolute left-0 top-0 bottom-0 w-[3px] bg-orange z-20 hidden lg:block" />
+
+      {/* ── Left panel: Copy ── */}
+      <div className="relative z-10 flex flex-col justify-center px-8 sm:px-12 md:px-16 lg:px-24 py-32 lg:py-24 order-2 lg:order-1 bg-cream">
+        {/* Logo + positioning tagline */}
+        <div className="hero-logo absolute top-8 left-8 sm:left-12 md:left-16 lg:left-24">
+          <Image
+            src="/lumiom-ai-logo.png"
+            alt="Lumiom AI"
+            width={150}
+            height={38}
+            priority
+          />
+          <p className="mt-2 font-mono text-[10px] tracking-[0.24em] uppercase text-navy/55">
+            Industrial AI Operating Platform
+          </p>
+        </div>
+
+        {/* Eyebrow */}
+        <p className="hero-eyebrow text-[11px] font-semibold tracking-[0.3em] text-text-secondary uppercase mb-5 mt-4">
+          A perspective by Mamatha Chamarthi
+        </p>
+
+        {/* Headline */}
+        <h1 className="hero-headline font-serif text-[36px] sm:text-[44px] md:text-[50px] lg:text-[56px] leading-[1.08] text-navy mb-7">
+          The Way Companies
+          <br className="hidden sm:block" /> Make Decisions
+          <br className="hidden sm:block" /> Is <em>Broken</em>
+        </h1>
+
+        {/* Subheadline */}
+        <p className="hero-subhead text-base md:text-[17px] text-text-secondary leading-relaxed max-w-md mb-10">
+          $1.6 trillion lost annually to failed transformations. 70&ndash;88%
+          of programs never deliver. A perspective on why&nbsp;&mdash; and
+          what needs to change.
+        </p>
+
+        {/* CTAs */}
+        <div className="hero-ctas flex flex-col sm:flex-row gap-3">
+          <a
+            href="#problem"
+            className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-orange text-white text-[15px] font-semibold rounded-lg hover:bg-orange-light transition-all duration-300 shadow-[0_2px_16px_rgba(232,108,58,0.25)] hover:shadow-[0_4px_24px_rgba(232,108,58,0.35)] hover:-translate-y-px"
+          >
+            Read the Perspective
+            <ArrowDown className="w-4 h-4" />
+          </a>
+          <a
+            href="#"
+            className="inline-flex items-center justify-center gap-2 px-7 py-3.5 border border-navy/10 text-navy text-[15px] font-semibold rounded-lg hover:bg-navy/[0.03] transition-all duration-300"
+          >
+            <Play className="w-4 h-4" />
+            Watch 2-Min Brief
+          </a>
+        </div>
+      </div>
+
+      {/* ── Right panel: Network-nodes image + Quote ── */}
+      <div className="relative order-1 lg:order-2 flex flex-col justify-center px-8 sm:px-12 md:px-16 lg:px-16 xl:px-20 py-16 lg:py-24 bg-cream overflow-hidden">
+        {/* Decorative circle — peeks behind the image */}
+        <div className="absolute -right-16 top-[12%] w-[220px] h-[220px] rounded-full bg-orange/[0.08] hidden lg:block" />
+
+        <div className="hero-photo relative flex flex-col items-start gap-10 max-w-lg lg:max-w-xl">
+          {/* Network-nodes image */}
+          <div className="relative w-full aspect-square sm:aspect-[4/3] rounded-2xl overflow-hidden bg-white/50 ring-1 ring-navy/[0.06]">
+            <Image
+              src="/hero-network-nodes.jpg"
+              alt="Dispersed intelligence, connected"
+              fill
+              className="object-cover mix-blend-multiply"
+              sizes="(min-width: 1024px) 40vw, 90vw"
+              priority
+            />
+          </div>
+
+          {/* Quote + attribution */}
+          <div className="relative flex flex-col gap-5 w-full">
+            {/* Large decorative quotation mark */}
+            <span
+              className="absolute -top-10 -left-4 font-serif text-[120px] leading-none text-orange/[0.12] select-none"
+              aria-hidden="true"
+            >
+              &ldquo;
+            </span>
+            <div className="w-10 h-[3px] bg-orange rounded-full" />
+            <blockquote className="font-serif text-[24px] sm:text-[28px] lg:text-[30px] leading-[1.3] text-navy/80 italic">
+              &ldquo;Industrial enterprises have spent 25 years dispersing
+              their intelligence&nbsp;&mdash; to consultants, integrators, and
+              outsourcers. They hold the bill. They don&apos;t own the
+              intelligence. They don&apos;t always see results.&rdquo;
+            </blockquote>
+            <div className="pt-1">
+              <p className="text-[16px] font-semibold text-navy">
+                Mamatha Chamarthi
+              </p>
+              <p className="text-[13px] text-text-secondary mt-0.5">
+                Founder &amp; CEO, Lumiom AI
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Grain */}
+      <div className="grain absolute inset-0 pointer-events-none z-[15]" />
+    </section>
+  );
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   HERO VIEW B — PLATFORM (operator-console aesthetic:
+   deep navy, hairline grid, monospace metadata, serif display type.
+   Typography-led, minimal composition, cinematic dark.)
+   ═════════════════════════════════════════════════════════════════ */
+function HeroPlatform({
+  view,
+  setView,
+}: {
+  view: HeroView;
+  setView: (v: HeroView) => void;
+}) {
+  return (
+    <section className="relative min-h-screen bg-navy overflow-hidden flex flex-col justify-center">
+      {/* Hairline grid overlay */}
+      <div className="platform-grid-bg absolute inset-0 pointer-events-none" />
+
+      {/* Soft radial glow (orange, upper right) */}
+      <div className="absolute -top-40 -right-32 w-[680px] h-[680px] rounded-full bg-orange/[0.06] blur-[120px] pointer-events-none" />
+
+      {/* Soft radial glow (navy-light, lower left) */}
+      <div className="absolute -bottom-40 -left-40 w-[680px] h-[680px] rounded-full bg-navy-light/60 blur-[140px] pointer-events-none" />
+
+      {/* Persistent top-right nav */}
+      <HeroTopNav view={view} setView={setView} dark={true} />
+
+      {/* Wordmark (top-left) */}
+      <div className="platform-kicker absolute top-8 left-8 sm:left-12 md:left-16 lg:left-24 flex items-center gap-2.5">
+        <span className="inline-block h-2 w-2 rounded-full bg-orange live-dot" aria-hidden="true" />
+        <span className="font-serif text-[22px] tracking-tight text-white">Lumiom</span>
+        <span className="font-mono text-[9px] tracking-[0.25em] uppercase text-orange/80 mt-1">AI</span>
+      </div>
+
+      {/* Content */}
+      <div className="relative z-10 max-w-6xl mx-auto w-full px-8 sm:px-12 md:px-16 lg:px-24 py-32 lg:py-20">
+        {/* Kicker — operator metadata */}
+        <div className="platform-kicker flex items-center gap-3 mb-10">
+          <span className="h-1.5 w-1.5 rounded-full bg-orange live-dot" />
+          <span className="font-mono text-[11px] tracking-[0.3em] uppercase text-orange/85">
+            MMXXVI · The Platform
+          </span>
+          <span className="hidden sm:inline-block flex-1 h-px bg-white/10 max-w-[180px]" />
+        </div>
+
+        {/* Headline */}
+        <h1 className="platform-headline font-serif text-[42px] sm:text-[60px] md:text-[76px] lg:text-[92px] leading-[0.98] text-white mb-8 max-w-4xl">
+          The Industrial AI
+          <br />
+          Operating <em className="text-orange">Platform.</em>
+        </h1>
+
+        {/* Subhead */}
+        <p className="platform-subhead text-[16px] sm:text-[18px] md:text-[20px] text-white/65 leading-[1.55] max-w-xl mb-12">
+          Continuous horizontal intelligence that never leaves your
+          enterprise. The first partner fully accountable for transformation
+          outcomes.
+        </p>
+
+        {/* CTAs */}
+        <div className="platform-ctas flex flex-col sm:flex-row gap-3 mb-20">
+          <a
+            href="mailto:demo@lumiom.ai"
+            className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-orange text-white text-[15px] font-semibold rounded-lg hover:bg-orange-light transition-all duration-300 shadow-[0_2px_24px_rgba(232,108,58,0.3)] hover:shadow-[0_4px_32px_rgba(232,108,58,0.45)] hover:-translate-y-px"
+          >
+            Request a Demo
+            <ArrowRight className="w-4 h-4" />
+          </a>
+          <a
+            href="#problem"
+            className="inline-flex items-center justify-center gap-2 px-7 py-3.5 border border-white/15 text-white/90 text-[15px] font-semibold rounded-lg hover:bg-white/[0.04] hover:border-white/25 transition-all duration-300"
+          >
+            <ArrowDown className="w-4 h-4" />
+            Read the Thesis
+          </a>
+        </div>
+
+        {/* Operator ticker — enterprise domains unified */}
+        <div className="platform-ticker relative mt-8">
+          <div className="flex items-center gap-3 mb-4">
+            <span className="h-px w-8 bg-orange/50" />
+            <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-white/45">
+              Operating Layer · Live
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-white/10 rounded-xl overflow-hidden border border-white/10">
+            {functions.map((name, i) => (
+              <div
+                key={name}
+                className="relative bg-navy-light/40 backdrop-blur-sm px-4 py-5 sm:py-6 flex items-center justify-between"
+              >
+                <span className="font-mono text-[11px] tracking-[0.2em] uppercase text-white/75">
+                  {name}
+                </span>
+                <span
+                  className="h-1.5 w-1.5 rounded-full bg-orange live-dot"
+                  style={{ animationDelay: `${i * 0.25}s` }}
+                />
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-px rounded-b-xl border-x border-b border-white/10 bg-gradient-to-r from-orange/[0.08] via-white/[0.02] to-orange/[0.08] px-5 py-4 flex items-center justify-between">
+            <span className="font-mono text-[11px] tracking-[0.28em] uppercase text-orange">
+              Lumiom · Continuous Horizontal Intelligence
+            </span>
+            <span className="hidden sm:inline-block font-mono text-[10px] tracking-[0.2em] uppercase text-white/40">
+              4 domains / 1 platform
+            </span>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
