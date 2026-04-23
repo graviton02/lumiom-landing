@@ -1,31 +1,27 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import RequestDemoDialog from "@/components/RequestDemoDialog";
 
-/* ────────────────── Shared wordmark ────────────────── */
+/* ────────────────── Shared wordmark (PNG) ────────────────── */
 function Wordmark({ variant = "light" }: { variant?: "light" | "dark" }) {
-  const textColor = variant === "dark" ? "text-white" : "text-navy";
   return (
     <Link
       href="/"
-      className={`group inline-flex items-center gap-2 ${textColor}`}
+      className="inline-flex items-center"
       aria-label="Lumiom home"
     >
-      <svg viewBox="0 0 28 10" className="w-6 h-2.5" aria-hidden="true">
-        <path
-          d="M1 6 Q 5 1, 9 5 T 17 5 T 27 5"
-          stroke="currentColor"
-          fill="none"
-          strokeWidth="1.6"
-          strokeLinecap="round"
-        />
-      </svg>
-      <span className="font-serif text-[22px] tracking-tight leading-none">
-        Lumiom
-      </span>
+      <Image
+        src="/lumiom-ai-logo.png"
+        alt="Lumiom AI"
+        width={140}
+        height={36}
+        priority
+        className={variant === "dark" ? "invert" : undefined}
+      />
     </Link>
   );
 }

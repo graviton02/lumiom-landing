@@ -93,9 +93,11 @@ const silos = [
 const functions = ["Operations", "Supply Chain", "Finance", "Commercial"];
 
 /* ─────────────────────────────────────────────
-   Unified wordmark — used in both Home and Platform
-   (resolves Ascendant feedback on inconsistent top-left logo).
-   Variant controls color only; shape is identical.
+   Unified wordmark — uses the Lumiom PNG logo
+   (RGBA, transparent). Variant="dark" applies an
+   invert filter so the navy ink reads as cream on
+   the Platform view's dark background. Transparent
+   pixels stay transparent under `invert`.
    ───────────────────────────────────────────── */
 function Wordmark({
   variant = "light",
@@ -104,28 +106,19 @@ function Wordmark({
   variant?: "light" | "dark";
   size?: "md" | "lg";
 }) {
-  const color = variant === "dark" ? "text-white" : "text-navy";
-  const sizeClasses =
+  const dims =
     size === "lg"
-      ? { wave: "w-7 h-2.5", text: "text-[26px]" }
-      : { wave: "w-6 h-2", text: "text-[22px]" };
+      ? { w: 170, h: 44 }
+      : { w: 150, h: 38 };
   return (
-    <div className={`inline-flex items-center gap-2 ${color}`}>
-      <svg viewBox="0 0 28 10" className={sizeClasses.wave} aria-hidden="true">
-        <path
-          d="M1 6 Q 5 1, 9 5 T 17 5 T 27 5"
-          stroke="currentColor"
-          fill="none"
-          strokeWidth="1.6"
-          strokeLinecap="round"
-        />
-      </svg>
-      <span
-        className={`font-serif ${sizeClasses.text} tracking-tight leading-none`}
-      >
-        Lumiom
-      </span>
-    </div>
+    <Image
+      src="/lumiom-ai-logo.png"
+      alt="Lumiom AI"
+      width={dims.w}
+      height={dims.h}
+      priority
+      className={variant === "dark" ? "invert" : undefined}
+    />
   );
 }
 
@@ -456,9 +449,10 @@ export default function Home() {
           <div className="max-w-3xl mx-auto">
             <Reveal>
               <div className="relative rounded-2xl border border-dashed border-navy/15 bg-white/60 p-8 md:p-10">
-                <span className="absolute top-4 right-4 inline-flex items-center gap-1.5 rounded-full border border-orange/30 bg-orange/10 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-orange">
-                  <span className="h-1.5 w-1.5 rounded-full bg-orange" />
-                  Draft · pending approval
+                <span className="absolute top-4 right-4 inline-flex items-center gap-2 rounded-full border border-orange/30 bg-orange/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.28em] text-orange">
+                  <span className="h-1 w-1 rounded-full bg-orange" />
+                  Testimonials
+                  <span className="h-1 w-1 rounded-full bg-orange" />
                 </span>
 
                 <p className="font-mono text-[11px] tracking-[0.28em] text-navy/40 uppercase mb-5">
@@ -561,10 +555,11 @@ function HeroHome({
 
         {/* Eyebrow "A perspective by..." REMOVED per feedback #7 */}
 
-        {/* Headline */}
-        <h1 className="hero-headline font-serif text-[36px] sm:text-[44px] md:text-[50px] lg:text-[58px] leading-[1.08] text-navy mb-7 mt-8">
+        {/* Headline — bold + italic contrast (feedback #5) */}
+        <h1 className="hero-headline font-serif text-[36px] sm:text-[44px] md:text-[52px] lg:text-[60px] leading-[1.05] text-navy mb-7 mt-8">
           The Way Companies
-          <br className="hidden sm:block" /> Make Decisions
+          <br className="hidden sm:block" /> Make{" "}
+          <strong className="font-bold">Decisions</strong>
           <br className="hidden sm:block" /> Is <em>Broken</em>
         </h1>
 
