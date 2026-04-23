@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import {
   Play,
   ArrowDown,
@@ -12,6 +13,7 @@ import {
   Server,
   Building2,
 } from "lucide-react";
+import RequestDemoDialog from "@/components/RequestDemoDialog";
 
 /* ─────────────────────────────────────────────
    Scroll reveal wrapper
@@ -91,9 +93,46 @@ const silos = [
 const functions = ["Operations", "Supply Chain", "Finance", "Commercial"];
 
 /* ─────────────────────────────────────────────
+   Unified wordmark — used in both Home and Platform
+   (resolves Ascendant feedback on inconsistent top-left logo).
+   Variant controls color only; shape is identical.
+   ───────────────────────────────────────────── */
+function Wordmark({
+  variant = "light",
+  size = "md",
+}: {
+  variant?: "light" | "dark";
+  size?: "md" | "lg";
+}) {
+  const color = variant === "dark" ? "text-white" : "text-navy";
+  const sizeClasses =
+    size === "lg"
+      ? { wave: "w-7 h-2.5", text: "text-[26px]" }
+      : { wave: "w-6 h-2", text: "text-[22px]" };
+  return (
+    <div className={`inline-flex items-center gap-2 ${color}`}>
+      <svg viewBox="0 0 28 10" className={sizeClasses.wave} aria-hidden="true">
+        <path
+          d="M1 6 Q 5 1, 9 5 T 17 5 T 27 5"
+          stroke="currentColor"
+          fill="none"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+        />
+      </svg>
+      <span
+        className={`font-serif ${sizeClasses.text} tracking-tight leading-none`}
+      >
+        Lumiom
+      </span>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────
    Hero view toggle (small, top-right, theme-aware)
    ───────────────────────────────────────────── */
-type HeroView = "thesis" | "platform";
+type HeroView = "home" | "platform";
 
 function HeroToggle({
   view,
@@ -117,13 +156,13 @@ function HeroToggle({
       <button
         type="button"
         role="tab"
-        aria-selected={view === "thesis"}
-        onClick={() => setView("thesis")}
+        aria-selected={view === "home"}
+        onClick={() => setView("home")}
         className={`px-3 py-1.5 rounded-full transition-colors ${
-          view === "thesis" ? activeBg : `${baseText} hover:opacity-100`
+          view === "home" ? activeBg : `${baseText} hover:opacity-100`
         }`}
       >
-        Thesis
+        Home
       </button>
       <button
         type="button"
@@ -141,17 +180,19 @@ function HeroToggle({
 }
 
 /* ─────────────────────────────────────────────
-   Top-right nav: Contact · Request Demo · Toggle
+   Top-right nav: CEO · Contact · Request Demo · Toggle
    Theme-aware; rendered inside each hero variant.
    ───────────────────────────────────────────── */
 function HeroTopNav({
   view,
   setView,
   dark = false,
+  onRequestDemo,
 }: {
   view: HeroView;
   setView: (v: HeroView) => void;
   dark?: boolean;
+  onRequestDemo: () => void;
 }) {
   const linkBase = dark
     ? "text-white/70 hover:text-white"
@@ -162,19 +203,26 @@ function HeroTopNav({
 
   return (
     <div className="absolute top-6 right-6 sm:top-8 sm:right-8 lg:top-10 lg:right-12 z-40 flex items-center gap-3 sm:gap-4">
+      <Link
+        href="/ceo-and-founder"
+        className={`hidden md:inline-flex text-[12px] font-medium tracking-wide transition-colors ${linkBase}`}
+      >
+        CEO &amp; Founder
+      </Link>
       <a
         href="mailto:ask@lumiom.ai"
         className={`hidden sm:inline-flex text-[12px] font-medium tracking-wide transition-colors ${linkBase}`}
       >
         Contact
       </a>
-      <a
-        href="mailto:demo@lumiom.ai"
+      <button
+        type="button"
+        onClick={onRequestDemo}
         className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-[12px] font-semibold tracking-wide transition-colors ${demoBase}`}
       >
         Request Demo
         <ArrowRight className="w-3 h-3" />
-      </a>
+      </button>
       <HeroToggle view={view} setView={setView} dark={dark} />
     </div>
   );
@@ -184,343 +232,348 @@ function HeroTopNav({
    PAGE
    ═════════════════════════════════════════════════════════════════ */
 export default function Home() {
-  const [view, setView] = useState<HeroView>("thesis");
+  const [view, setView] = useState<HeroView>("home");
+  const [demoOpen, setDemoOpen] = useState(false);
+  const openDemo = () => setDemoOpen(true);
 
   return (
-    <main className="overflow-x-hidden">
-      {/* ═══════════════════════════════════════════
-          SECTION 1 — HERO (with view toggle)
-          ═══════════════════════════════════════════ */}
-      <div key={view}>
-        {view === "thesis" ? (
-          <HeroThesis view={view} setView={setView} />
-        ) : (
-          <HeroPlatform view={view} setView={setView} />
-        )}
-      </div>
-
-      {/* ═══════════════════════════════════════════
-          SECTION 2 — THE PROBLEM
-          ═══════════════════════════════════════════ */}
-      <section
-        id="problem"
-        className="relative py-24 md:py-32 lg:py-36 px-8 sm:px-12 md:px-16 lg:px-24 bg-cream"
-      >
-        <div className="max-w-5xl mx-auto">
-          <Reveal>
-            <p className="text-[11px] font-semibold tracking-[0.3em] text-orange uppercase mb-5">
-              The Problem
-            </p>
-          </Reveal>
-
-          <Reveal delay={100}>
-            <h2 className="font-serif text-[32px] sm:text-[40px] md:text-[44px] lg:text-[48px] leading-[1.1] text-navy mb-16 max-w-3xl">
-              25 Years of Dispersed Intelligence.
-              <br />
-              No One Owns the <em>Outcome.</em>
-            </h2>
-          </Reveal>
-
-          {/* Silo cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-4">
-            {silos.map((silo, i) => {
-              const Icon = silo.icon;
-              return (
-                <Reveal key={silo.label} delay={200 + i * 120}>
-                  <div className="relative bg-white rounded-xl p-7 pb-8 min-h-[220px] lg:min-h-[240px] flex flex-col justify-between border border-black/[0.04] shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
-                    <div
-                      className="absolute top-0 left-0 right-0 h-[3px] rounded-t-xl"
-                      style={{ backgroundColor: silo.color }}
-                    />
-                    <div
-                      className="w-11 h-11 rounded-lg flex items-center justify-center mt-1"
-                      style={{ backgroundColor: silo.color + "10" }}
-                    >
-                      <Icon
-                        className="w-5 h-5"
-                        style={{ color: silo.color }}
-                        strokeWidth={1.8}
-                      />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-navy text-[17px] mb-1.5 leading-tight">
-                        {silo.label}
-                      </p>
-                      <p className="text-text-secondary text-[14px] leading-relaxed">
-                        {silo.line}
-                      </p>
-                    </div>
-                  </div>
-                </Reveal>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════
-          SECTION 3 — THE IMPERATIVE
-          ═══════════════════════════════════════════ */}
-      <section className="relative py-24 md:py-32 lg:py-40 px-8 sm:px-12 md:px-16 lg:px-24 bg-navy overflow-hidden">
-        {/* Orange accent bar */}
-        <div className="absolute top-0 left-8 sm:left-12 md:left-16 lg:left-24 w-[3px] h-20 bg-orange" />
-
-        <div className="max-w-4xl mx-auto">
-          <Reveal>
-            <p className="text-[11px] font-semibold tracking-[0.3em] text-orange uppercase mb-6">
-              The Imperative
-            </p>
-          </Reveal>
-
-          <Reveal delay={150}>
-            <h2 className="font-serif text-[32px] sm:text-[40px] md:text-[48px] lg:text-[54px] leading-[1.08] text-white mb-10 max-w-3xl">
-              This Isn&apos;t a Data Problem.
-              <br />
-              It&apos;s a <em className="text-orange">Decision</em> Problem.
-            </h2>
-          </Reveal>
-
-          <Reveal delay={300}>
-            <p className="text-[17px] md:text-lg text-white/55 leading-relaxed max-w-2xl">
-              $250 billion spent annually on enterprise transformation.
-              70&ndash;88% of programs fail to achieve their stated goals. $1.6
-              trillion wasted every year. The systems were never built to help
-              leaders make connected, real-time decisions across the business.
-            </p>
-          </Reveal>
+    <>
+      <main className="overflow-x-hidden">
+        {/* ═══════════════════════════════════════════
+            SECTION 1 — HERO (with view toggle)
+            ═══════════════════════════════════════════ */}
+        <div key={view}>
+          {view === "home" ? (
+            <HeroHome view={view} setView={setView} onRequestDemo={openDemo} />
+          ) : (
+            <HeroPlatform
+              view={view}
+              setView={setView}
+              onRequestDemo={openDemo}
+            />
+          )}
         </div>
 
-        {/* Subtle decorative glow */}
-        <div className="absolute -right-32 top-1/2 -translate-y-1/2 w-80 h-80 rounded-full bg-orange/[0.03] blur-3xl" />
-      </section>
-
-      {/* ═══════════════════════════════════════════
-          SECTION 4 — THE SOLUTION
-          (headline now leads with Industrial AI Operating Platform)
-          ═══════════════════════════════════════════ */}
-      <section className="relative py-24 md:py-32 lg:py-36 px-8 sm:px-12 md:px-16 lg:px-24 bg-warm-white">
-        <div className="max-w-4xl mx-auto text-center">
-          <Reveal>
-            <p className="text-[11px] font-semibold tracking-[0.3em] text-orange uppercase mb-5">
-              The Solution
-            </p>
-          </Reveal>
-
-          <Reveal delay={100}>
-            <h2 className="font-serif text-[32px] sm:text-[40px] md:text-[46px] lg:text-[52px] leading-[1.08] text-navy mb-5">
-              The Industrial AI
-              <br />
-              Operating <em>Platform.</em>
-            </h2>
-          </Reveal>
-
-          <Reveal delay={180}>
-            <p className="font-mono text-[11px] sm:text-xs tracking-[0.24em] uppercase text-orange/90 mb-8">
-              Continuous Horizontal Intelligence
-            </p>
-          </Reveal>
-
-          <Reveal delay={250}>
-            <p className="text-base md:text-[17px] text-text-secondary leading-relaxed max-w-xl mx-auto mb-20">
-              Lumiom is the first platform that reassembles your enterprise
-              intelligence&nbsp;&mdash; continuous, horizontal, and
-              outcome-linked. Not another consultant. Not another vendor. The
-              first partner fully accountable for transformation outcomes.
-            </p>
-          </Reveal>
-
-          {/* ── System diagram ── */}
-          <Reveal delay={350}>
-            <div className="flex flex-col items-center">
-              {/* Top: 4 function boxes */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 w-full max-w-[620px]">
-                {functions.map((name) => (
-                  <div
-                    key={name}
-                    className="py-4 px-3 bg-white rounded-lg text-sm font-semibold text-navy border border-black/[0.06] shadow-[0_1px_2px_rgba(0,0,0,0.03)]"
-                  >
-                    {name}
-                  </div>
-                ))}
-              </div>
-
-              {/* Convergence lines (desktop) */}
-              <svg
-                viewBox="0 0 620 32"
-                className="hidden lg:block w-full max-w-[620px] h-8 text-navy/12"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-              >
-                <line x1="78" y1="0" x2="310" y2="32" />
-                <line x1="233" y1="0" x2="310" y2="32" />
-                <line x1="388" y1="0" x2="310" y2="32" />
-                <line x1="543" y1="0" x2="310" y2="32" />
-              </svg>
-              {/* Simple connector (mobile) */}
-              <div className="lg:hidden flex justify-center">
-                <div className="w-px h-8 bg-navy/12" />
-              </div>
-
-              {/* Lumiom layer */}
-              <div className="w-full max-w-md py-5 px-6 bg-navy text-white rounded-xl font-semibold text-[15px] md:text-base ring-2 ring-orange/20 shadow-[0_4px_32px_rgba(15,23,41,0.25)]">
-                Lumiom &middot; Continuous Horizontal Intelligence
-              </div>
-
-              {/* Arrow down */}
-              <div className="flex flex-col items-center">
-                <div className="w-px h-7 bg-orange/30" />
-                <ArrowDown className="w-4 h-4 text-orange -mt-0.5" />
-              </div>
-
-              {/* Outcome */}
-              <div className="py-5 px-8 bg-orange/[0.05] border border-orange/12 rounded-xl max-w-xs mt-1">
-                <p className="font-semibold text-navy text-[15px]">
-                  Measurable Outcomes
-                </p>
-                <p className="text-sm text-text-secondary mt-1">
-                  We only win when you win.
-                </p>
-              </div>
-            </div>
-          </Reveal>
-
-          {/* End CTA — wired to demo */}
-          <Reveal delay={450}>
-            <div className="mt-20">
-              <a
-                href="mailto:demo@lumiom.ai"
-                className="inline-flex items-center gap-2.5 px-8 py-4 bg-navy text-white text-[15px] font-semibold rounded-lg hover:bg-navy-light transition-all duration-300 shadow-[0_2px_16px_rgba(15,23,41,0.18)] hover:shadow-[0_4px_24px_rgba(15,23,41,0.28)] hover:-translate-y-px"
-              >
-                Let&apos;s Talk
-                <ArrowRight className="w-4 h-4" />
-              </a>
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════
-          SECTION 5 — TESTIMONIAL PLACEHOLDER (draft)
-          Darlene Taylor, pending approval via Mamatha.
-          ═══════════════════════════════════════════ */}
-      <section className="relative py-20 md:py-24 lg:py-28 px-8 sm:px-12 md:px-16 lg:px-24 bg-cream">
-        <div className="max-w-3xl mx-auto">
-          <Reveal>
-            <div className="relative rounded-2xl border border-dashed border-navy/15 bg-white/60 p-8 md:p-10">
-              {/* Draft badge */}
-              <span className="absolute top-4 right-4 inline-flex items-center gap-1.5 rounded-full border border-orange/30 bg-orange/10 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-orange">
-                <span className="h-1.5 w-1.5 rounded-full bg-orange" />
-                Draft · pending approval
-              </span>
-
-              <p className="font-mono text-[11px] tracking-[0.28em] text-navy/40 uppercase mb-5">
-                Early Partner
+        {/* ═══════════════════════════════════════════
+            SECTION 2 — THE PROBLEM
+            ═══════════════════════════════════════════ */}
+        <section
+          id="problem"
+          className="relative py-24 md:py-32 lg:py-36 px-8 sm:px-12 md:px-16 lg:px-24 bg-cream"
+        >
+          <div className="max-w-5xl mx-auto">
+            <Reveal>
+              <p className="text-[11px] font-semibold tracking-[0.3em] text-orange uppercase mb-5">
+                The Problem
               </p>
+            </Reveal>
 
-              <blockquote className="font-serif text-[22px] sm:text-[26px] md:text-[28px] leading-[1.3] text-navy/85 italic">
-                &ldquo;Lumiom helped me build the first AI strategy for my
-                enterprise&nbsp;&mdash; and we are now piloting v1 of the
-                Lumiom platform together.&rdquo;
-              </blockquote>
+            <Reveal delay={100}>
+              <h2 className="font-serif text-[32px] sm:text-[40px] md:text-[44px] lg:text-[48px] leading-[1.1] text-navy mb-16 max-w-3xl">
+                25 Years of Dispersed Intelligence.
+                <br />
+                No One Owns the <em>Outcome.</em>
+              </h2>
+            </Reveal>
 
-              <div className="mt-6">
-                <p className="text-[15px] font-semibold text-navy/45">
-                  [ Name &mdash; pending approval ]
-                </p>
-                <p className="text-[13px] text-navy/35 mt-0.5">
-                  [ Title &middot; Organization &mdash; pending approval ]
-                </p>
-              </div>
+            {/* Silo cards — equal icon↔title spacing (flex gap, no justify-between) */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-4">
+              {silos.map((silo, i) => {
+                const Icon = silo.icon;
+                return (
+                  <Reveal key={silo.label} delay={200 + i * 120}>
+                    <div className="relative bg-white rounded-xl p-7 pb-7 min-h-[220px] lg:min-h-[240px] flex flex-col border border-black/[0.04] shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+                      <div
+                        className="absolute top-0 left-0 right-0 h-[3px] rounded-t-xl"
+                        style={{ backgroundColor: silo.color }}
+                      />
+                      <div
+                        className="w-11 h-11 rounded-lg flex items-center justify-center"
+                        style={{ backgroundColor: silo.color + "10" }}
+                      >
+                        <Icon
+                          className="w-5 h-5"
+                          style={{ color: silo.color }}
+                          strokeWidth={1.8}
+                        />
+                      </div>
+                      <div className="mt-5">
+                        <p className="font-semibold text-navy text-[17px] mb-2 leading-tight">
+                          {silo.label}
+                        </p>
+                        <p className="text-text-secondary text-[14px] leading-relaxed">
+                          {silo.line}
+                        </p>
+                      </div>
+                    </div>
+                  </Reveal>
+                );
+              })}
             </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* ═══════════════════════════════════════════
-          FOOTER
-          ═══════════════════════════════════════════ */}
-      <footer className="py-10 px-8 sm:px-12 md:px-16 lg:px-24 bg-navy">
-        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
-          <p className="text-white/30 text-sm">
-            &copy; 2026 Lumiom AI. All rights reserved.
-          </p>
-          <div className="flex items-center gap-5 text-[13px]">
-            <a
-              href="mailto:ask@lumiom.ai"
-              className="text-white/55 hover:text-white transition-colors"
-            >
-              ask@lumiom.ai
-            </a>
-            <span className="text-white/20">·</span>
-            <a
-              href="mailto:demo@lumiom.ai"
-              className="text-white/55 hover:text-white transition-colors"
-            >
-              demo@lumiom.ai
-            </a>
           </div>
-        </div>
-      </footer>
-    </main>
+        </section>
+
+        {/* ═══════════════════════════════════════════
+            SECTION 3 — THE IMPERATIVE
+            ═══════════════════════════════════════════ */}
+        <section className="relative py-24 md:py-32 lg:py-40 px-8 sm:px-12 md:px-16 lg:px-24 bg-navy overflow-hidden">
+          <div className="absolute top-0 left-8 sm:left-12 md:left-16 lg:left-24 w-[3px] h-20 bg-orange" />
+
+          <div className="max-w-4xl mx-auto">
+            <Reveal>
+              <p className="text-[11px] font-semibold tracking-[0.3em] text-orange uppercase mb-6">
+                The Imperative
+              </p>
+            </Reveal>
+
+            <Reveal delay={150}>
+              <h2 className="font-serif text-[32px] sm:text-[40px] md:text-[48px] lg:text-[54px] leading-[1.08] text-white mb-10 max-w-3xl">
+                This Isn&apos;t a Data Problem.
+                <br />
+                It&apos;s a <em className="text-orange">Decision</em> Problem.
+              </h2>
+            </Reveal>
+
+            <Reveal delay={300}>
+              <p className="text-[17px] md:text-lg text-white/55 leading-relaxed max-w-2xl">
+                $250 billion spent annually on enterprise transformation.
+                70&ndash;88% of programs fail to achieve their stated goals.
+                $1.6 trillion wasted every year. The systems were never built
+                to help leaders make connected, real-time decisions across the
+                business.
+              </p>
+            </Reveal>
+          </div>
+
+          <div className="absolute -right-32 top-1/2 -translate-y-1/2 w-80 h-80 rounded-full bg-orange/[0.03] blur-3xl" />
+        </section>
+
+        {/* ═══════════════════════════════════════════
+            SECTION 4 — THE SOLUTION
+            ═══════════════════════════════════════════ */}
+        <section className="relative py-24 md:py-32 lg:py-36 px-8 sm:px-12 md:px-16 lg:px-24 bg-warm-white">
+          <div className="max-w-4xl mx-auto text-center">
+            <Reveal>
+              <p className="text-[11px] font-semibold tracking-[0.3em] text-orange uppercase mb-5">
+                The Solution
+              </p>
+            </Reveal>
+
+            <Reveal delay={100}>
+              <h2 className="font-serif text-[32px] sm:text-[40px] md:text-[46px] lg:text-[52px] leading-[1.08] text-navy mb-5">
+                The Industrial AI
+                <br />
+                Operating <em>Platform.</em>
+              </h2>
+            </Reveal>
+
+            <Reveal delay={180}>
+              <p className="font-mono text-[11px] sm:text-xs tracking-[0.24em] uppercase text-orange/90 mb-8">
+                Continuous Horizontal Intelligence
+              </p>
+            </Reveal>
+
+            <Reveal delay={250}>
+              <p className="text-base md:text-[17px] text-text-secondary leading-relaxed max-w-xl mx-auto mb-20">
+                Lumiom is the first platform that reassembles your enterprise
+                intelligence&nbsp;&mdash; continuous, horizontal, and
+                outcome-linked. Not another consultant. Not another vendor.
+                The first partner fully accountable for transformation
+                outcomes.
+              </p>
+            </Reveal>
+
+            {/* ── System diagram ── */}
+            <Reveal delay={350}>
+              <div className="flex flex-col items-center">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 w-full max-w-[620px]">
+                  {functions.map((name) => (
+                    <div
+                      key={name}
+                      className="py-4 px-3 bg-white rounded-lg text-sm font-semibold text-navy border border-black/[0.06] shadow-[0_1px_2px_rgba(0,0,0,0.03)]"
+                    >
+                      {name}
+                    </div>
+                  ))}
+                </div>
+
+                <svg
+                  viewBox="0 0 620 32"
+                  className="hidden lg:block w-full max-w-[620px] h-8 text-navy/12"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                >
+                  <line x1="78" y1="0" x2="310" y2="32" />
+                  <line x1="233" y1="0" x2="310" y2="32" />
+                  <line x1="388" y1="0" x2="310" y2="32" />
+                  <line x1="543" y1="0" x2="310" y2="32" />
+                </svg>
+                <div className="lg:hidden flex justify-center">
+                  <div className="w-px h-8 bg-navy/12" />
+                </div>
+
+                <div className="w-full max-w-md py-5 px-6 bg-navy text-white rounded-xl font-semibold text-[15px] md:text-base ring-2 ring-orange/20 shadow-[0_4px_32px_rgba(15,23,41,0.25)]">
+                  Lumiom &middot; Continuous Horizontal Intelligence
+                </div>
+
+                <div className="flex flex-col items-center">
+                  <div className="w-px h-7 bg-orange/30" />
+                  <ArrowDown className="w-4 h-4 text-orange -mt-0.5" />
+                </div>
+
+                <div className="py-5 px-8 bg-orange/[0.05] border border-orange/12 rounded-xl max-w-xs mt-1">
+                  <p className="font-semibold text-navy text-[15px]">
+                    Measurable Outcomes
+                  </p>
+                  <p className="text-sm text-text-secondary mt-1">
+                    We only win when you win.
+                  </p>
+                </div>
+              </div>
+            </Reveal>
+
+            {/* End CTA — Request Demo, orange, prominent */}
+            <Reveal delay={450}>
+              <div className="mt-20">
+                <button
+                  type="button"
+                  onClick={openDemo}
+                  className="inline-flex items-center gap-2.5 px-9 py-4 bg-orange text-white text-[16px] font-semibold rounded-lg hover:bg-orange-light transition-all duration-300 shadow-[0_4px_24px_rgba(232,108,58,0.32)] hover:shadow-[0_6px_32px_rgba(232,108,58,0.45)] hover:-translate-y-px"
+                >
+                  Request a Demo
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+            </Reveal>
+          </div>
+        </section>
+
+        {/* ═══════════════════════════════════════════
+            SECTION 5 — TESTIMONIAL PLACEHOLDER
+            ═══════════════════════════════════════════ */}
+        <section className="relative py-20 md:py-24 lg:py-28 px-8 sm:px-12 md:px-16 lg:px-24 bg-cream">
+          <div className="max-w-3xl mx-auto">
+            <Reveal>
+              <div className="relative rounded-2xl border border-dashed border-navy/15 bg-white/60 p-8 md:p-10">
+                <span className="absolute top-4 right-4 inline-flex items-center gap-1.5 rounded-full border border-orange/30 bg-orange/10 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.2em] text-orange">
+                  <span className="h-1.5 w-1.5 rounded-full bg-orange" />
+                  Draft · pending approval
+                </span>
+
+                <p className="font-mono text-[11px] tracking-[0.28em] text-navy/40 uppercase mb-5">
+                  Early Partner
+                </p>
+
+                <blockquote className="font-serif text-[22px] sm:text-[26px] md:text-[28px] leading-[1.3] text-navy/85 italic">
+                  &ldquo;Lumiom helped me build the first AI strategy for my
+                  enterprise&nbsp;&mdash; and we are now piloting v1 of the
+                  Lumiom platform together.&rdquo;
+                </blockquote>
+
+                <div className="mt-6">
+                  <p className="text-[15px] font-semibold text-navy/45">
+                    [ Name &mdash; pending approval ]
+                  </p>
+                  <p className="text-[13px] text-navy/35 mt-0.5">
+                    [ Title &middot; Organization &mdash; pending approval ]
+                  </p>
+                </div>
+              </div>
+            </Reveal>
+          </div>
+        </section>
+
+        {/* ═══════════════════════════════════════════
+            FOOTER
+            ═══════════════════════════════════════════ */}
+        <footer className="py-10 px-8 sm:px-12 md:px-16 lg:px-24 bg-navy">
+          <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+            <p className="text-white/30 text-sm">
+              &copy; 2026 Lumiom AI. All rights reserved.
+            </p>
+            <div className="flex items-center gap-5 text-[13px]">
+              <Link
+                href="/ceo-and-founder"
+                className="text-white/55 hover:text-white transition-colors"
+              >
+                CEO &amp; Founder
+              </Link>
+              <span className="text-white/20">·</span>
+              <a
+                href="mailto:ask@lumiom.ai"
+                className="text-white/55 hover:text-white transition-colors"
+              >
+                ask@lumiom.ai
+              </a>
+              <span className="text-white/20">·</span>
+              <button
+                type="button"
+                onClick={openDemo}
+                className="text-white/55 hover:text-white transition-colors"
+              >
+                Request a Demo
+              </button>
+            </div>
+          </div>
+        </footer>
+      </main>
+
+      <RequestDemoDialog open={demoOpen} onClose={() => setDemoOpen(false)} />
+    </>
   );
 }
 
 /* ═════════════════════════════════════════════════════════════════
-   HERO VIEW A — THESIS (editorial perspective, existing design
-   updated with tagline, network image, extended quote)
+   HERO VIEW A — HOME (editorial perspective)
+   — Unified wordmark (no PNG), no Mamatha eyebrow, orange-line-only
+     quote graphic, animated image area.
    ═════════════════════════════════════════════════════════════════ */
-function HeroThesis({
+function HeroHome({
   view,
   setView,
+  onRequestDemo,
 }: {
   view: HeroView;
   setView: (v: HeroView) => void;
+  onRequestDemo: () => void;
 }) {
   return (
     <section className="relative min-h-screen grid grid-cols-1 lg:grid-cols-[1.15fr_1fr]">
-      {/* Persistent top-right nav */}
-      <HeroTopNav view={view} setView={setView} dark={false} />
+      <HeroTopNav
+        view={view}
+        setView={setView}
+        dark={false}
+        onRequestDemo={onRequestDemo}
+      />
 
-      {/* Left accent line */}
       <div className="hero-accent absolute left-0 top-0 bottom-0 w-[3px] bg-orange z-20 hidden lg:block" />
 
       {/* ── Left panel: Copy ── */}
       <div className="relative z-10 flex flex-col justify-center px-8 sm:px-12 md:px-16 lg:px-24 py-32 lg:py-24 order-2 lg:order-1 bg-cream">
-        {/* Logo + positioning tagline */}
+        {/* Wordmark + positioning tagline (unified with Platform view) */}
         <div className="hero-logo absolute top-8 left-8 sm:left-12 md:left-16 lg:left-24">
-          <Image
-            src="/lumiom-ai-logo.png"
-            alt="Lumiom AI"
-            width={150}
-            height={38}
-            priority
-          />
+          <Wordmark variant="light" />
           <p className="mt-2 font-mono text-[10px] tracking-[0.24em] uppercase text-navy/55">
             Industrial AI Operating Platform
           </p>
         </div>
 
-        {/* Eyebrow */}
-        <p className="hero-eyebrow text-[11px] font-semibold tracking-[0.3em] text-text-secondary uppercase mb-5 mt-4">
-          A perspective by Mamatha Chamarthi
-        </p>
+        {/* Eyebrow "A perspective by..." REMOVED per feedback #7 */}
 
         {/* Headline */}
-        <h1 className="hero-headline font-serif text-[36px] sm:text-[44px] md:text-[50px] lg:text-[56px] leading-[1.08] text-navy mb-7">
+        <h1 className="hero-headline font-serif text-[36px] sm:text-[44px] md:text-[50px] lg:text-[58px] leading-[1.08] text-navy mb-7 mt-8">
           The Way Companies
           <br className="hidden sm:block" /> Make Decisions
           <br className="hidden sm:block" /> Is <em>Broken</em>
         </h1>
 
-        {/* Subheadline */}
         <p className="hero-subhead text-base md:text-[17px] text-text-secondary leading-relaxed max-w-md mb-10">
           $1.6 trillion lost annually to failed transformations. 70&ndash;88%
           of programs never deliver. A perspective on why&nbsp;&mdash; and
           what needs to change.
         </p>
 
-        {/* CTAs */}
         <div className="hero-ctas flex flex-col sm:flex-row gap-3">
           <a
             href="#problem"
@@ -541,12 +594,15 @@ function HeroThesis({
 
       {/* ── Right panel: Network-nodes image + Quote ── */}
       <div className="relative order-1 lg:order-2 flex flex-col justify-center px-8 sm:px-12 md:px-16 lg:px-16 xl:px-20 py-16 lg:py-24 bg-cream overflow-hidden">
-        {/* Decorative circle — peeks behind the image */}
-        <div className="absolute -right-16 top-[12%] w-[220px] h-[220px] rounded-full bg-orange/[0.08] hidden lg:block" />
+        {/* Ambient drifting circle behind image */}
+        <div className="hero-ambient-drift absolute -right-16 top-[10%] w-[240px] h-[240px] rounded-full bg-orange/[0.08] hidden lg:block pointer-events-none" />
+
+        {/* Second ambient glow, softer, lower */}
+        <div className="hero-ambient-pulse absolute -left-16 bottom-[18%] w-[180px] h-[180px] rounded-full bg-orange/[0.05] blur-2xl pointer-events-none hidden lg:block" />
 
         <div className="hero-photo relative flex flex-col items-start gap-10 max-w-lg lg:max-w-xl">
-          {/* Network-nodes image */}
-          <div className="relative w-full aspect-square sm:aspect-[4/3] rounded-2xl overflow-hidden bg-white/50 ring-1 ring-navy/[0.06]">
+          {/* Network-nodes image — gently floating */}
+          <div className="hero-image-float relative w-full aspect-square sm:aspect-[4/3] rounded-2xl overflow-hidden bg-white/50 ring-1 ring-navy/[0.06]">
             <Image
               src="/hero-network-nodes.jpg"
               alt="Dispersed intelligence, connected"
@@ -555,17 +611,12 @@ function HeroThesis({
               sizes="(min-width: 1024px) 40vw, 90vw"
               priority
             />
+            {/* Subtle animated inner glow overlay */}
+            <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-orange/[0.05] pointer-events-none" />
           </div>
 
-          {/* Quote + attribution */}
+          {/* Quote + attribution — orange line only (no decorative " per feedback #9) */}
           <div className="relative flex flex-col gap-5 w-full">
-            {/* Large decorative quotation mark */}
-            <span
-              className="absolute -top-10 -left-4 font-serif text-[120px] leading-none text-orange/[0.12] select-none"
-              aria-hidden="true"
-            >
-              &ldquo;
-            </span>
             <div className="w-10 h-[3px] bg-orange rounded-full" />
             <blockquote className="font-serif text-[24px] sm:text-[28px] lg:text-[30px] leading-[1.3] text-navy/80 italic">
               &ldquo;Industrial enterprises have spent 25 years dispersing
@@ -585,48 +636,43 @@ function HeroThesis({
         </div>
       </div>
 
-      {/* Grain */}
       <div className="grain absolute inset-0 pointer-events-none z-[15]" />
     </section>
   );
 }
 
 /* ═════════════════════════════════════════════════════════════════
-   HERO VIEW B — PLATFORM (operator-console aesthetic:
-   deep navy, hairline grid, monospace metadata, serif display type.
-   Typography-led, minimal composition, cinematic dark.)
+   HERO VIEW B — PLATFORM (operator-console aesthetic)
+   Unified wordmark on top-left (matches Home).
    ═════════════════════════════════════════════════════════════════ */
 function HeroPlatform({
   view,
   setView,
+  onRequestDemo,
 }: {
   view: HeroView;
   setView: (v: HeroView) => void;
+  onRequestDemo: () => void;
 }) {
   return (
     <section className="relative min-h-screen bg-navy overflow-hidden flex flex-col justify-center">
-      {/* Hairline grid overlay */}
       <div className="platform-grid-bg absolute inset-0 pointer-events-none" />
-
-      {/* Soft radial glow (orange, upper right) */}
       <div className="absolute -top-40 -right-32 w-[680px] h-[680px] rounded-full bg-orange/[0.06] blur-[120px] pointer-events-none" />
-
-      {/* Soft radial glow (navy-light, lower left) */}
       <div className="absolute -bottom-40 -left-40 w-[680px] h-[680px] rounded-full bg-navy-light/60 blur-[140px] pointer-events-none" />
 
-      {/* Persistent top-right nav */}
-      <HeroTopNav view={view} setView={setView} dark={true} />
+      <HeroTopNav
+        view={view}
+        setView={setView}
+        dark={true}
+        onRequestDemo={onRequestDemo}
+      />
 
-      {/* Wordmark (top-left) */}
-      <div className="platform-kicker absolute top-8 left-8 sm:left-12 md:left-16 lg:left-24 flex items-center gap-2.5">
-        <span className="inline-block h-2 w-2 rounded-full bg-orange live-dot" aria-hidden="true" />
-        <span className="font-serif text-[22px] tracking-tight text-white">Lumiom</span>
-        <span className="font-mono text-[9px] tracking-[0.25em] uppercase text-orange/80 mt-1">AI</span>
+      {/* Wordmark (top-left) — same treatment as Home, dark variant */}
+      <div className="platform-kicker absolute top-8 left-8 sm:left-12 md:left-16 lg:left-24">
+        <Wordmark variant="dark" />
       </div>
 
-      {/* Content */}
       <div className="relative z-10 max-w-6xl mx-auto w-full px-8 sm:px-12 md:px-16 lg:px-24 py-32 lg:py-20">
-        {/* Kicker — operator metadata */}
         <div className="platform-kicker flex items-center gap-3 mb-10">
           <span className="h-1.5 w-1.5 rounded-full bg-orange live-dot" />
           <span className="font-mono text-[11px] tracking-[0.3em] uppercase text-orange/85">
@@ -635,29 +681,27 @@ function HeroPlatform({
           <span className="hidden sm:inline-block flex-1 h-px bg-white/10 max-w-[180px]" />
         </div>
 
-        {/* Headline */}
         <h1 className="platform-headline font-serif text-[42px] sm:text-[60px] md:text-[76px] lg:text-[92px] leading-[0.98] text-white mb-8 max-w-4xl">
           The Industrial AI
           <br />
           Operating <em className="text-orange">Platform.</em>
         </h1>
 
-        {/* Subhead */}
         <p className="platform-subhead text-[16px] sm:text-[18px] md:text-[20px] text-white/65 leading-[1.55] max-w-xl mb-12">
           Continuous horizontal intelligence that never leaves your
           enterprise. The first partner fully accountable for transformation
           outcomes.
         </p>
 
-        {/* CTAs */}
         <div className="platform-ctas flex flex-col sm:flex-row gap-3 mb-20">
-          <a
-            href="mailto:demo@lumiom.ai"
+          <button
+            type="button"
+            onClick={onRequestDemo}
             className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-orange text-white text-[15px] font-semibold rounded-lg hover:bg-orange-light transition-all duration-300 shadow-[0_2px_24px_rgba(232,108,58,0.3)] hover:shadow-[0_4px_32px_rgba(232,108,58,0.45)] hover:-translate-y-px"
           >
             Request a Demo
             <ArrowRight className="w-4 h-4" />
-          </a>
+          </button>
           <a
             href="#problem"
             className="inline-flex items-center justify-center gap-2 px-7 py-3.5 border border-white/15 text-white/90 text-[15px] font-semibold rounded-lg hover:bg-white/[0.04] hover:border-white/25 transition-all duration-300"
@@ -667,7 +711,6 @@ function HeroPlatform({
           </a>
         </div>
 
-        {/* Operator ticker — enterprise domains unified */}
         <div className="platform-ticker relative mt-8">
           <div className="flex items-center gap-3 mb-4">
             <span className="h-px w-8 bg-orange/50" />
