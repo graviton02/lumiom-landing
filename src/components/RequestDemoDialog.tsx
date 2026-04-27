@@ -117,14 +117,14 @@ export default function RequestDemoDialog({
             Let&apos;s see how Lumiom fits your enterprise.
           </h2>
           <p className="text-[14px] text-text-secondary mb-7">
-            A short form. We&apos;ll reply within one business day.
+            We&apos;ll reply within one business day.
           </p>
 
           {status === "success" ? (
             <div className="rounded-xl border border-orange/30 bg-orange/[0.06] p-5">
               <p className="font-semibold text-navy mb-1">Got it — thank you.</p>
               <p className="text-sm text-text-secondary">
-                Your request is in. Kara from the Lumiom team will be in touch
+                Your request is in. The Lumiom team will reach out to you
                 shortly.
               </p>
               <button
