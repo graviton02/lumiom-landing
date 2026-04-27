@@ -40,7 +40,7 @@ export async function POST(request: Request) {
 
   const token = process.env.HUBSPOT_ACCESS_TOKEN;
   if (!token) {
-    console.error("[request-demo] HUBSPOT_ACCESS_TOKEN not set");
+    console.error("[contact] HUBSPOT_ACCESS_TOKEN not set");
     return NextResponse.json(
       { ok: false, error: "server not configured" },
       { status: 500 }
@@ -51,16 +51,16 @@ export async function POST(request: Request) {
     const { contactId } = await pushSubmissionToHubSpot(
       token,
       data,
-      "Demo Request"
+      "Contact Inquiry"
     );
-    console.log("[request-demo] HubSpot push ok", {
+    console.log("[contact] HubSpot push ok", {
       contactId,
       email: data.email,
       receivedAt: new Date().toISOString(),
     });
     return NextResponse.json({ ok: true });
   } catch (err) {
-    console.error("[request-demo] HubSpot push failed", err);
+    console.error("[contact] HubSpot push failed", err);
     return NextResponse.json(
       { ok: false, error: "could not record submission" },
       { status: 502 }

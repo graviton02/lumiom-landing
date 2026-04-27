@@ -14,6 +14,7 @@ import {
   Building2,
 } from "lucide-react";
 import RequestDemoDialog from "@/components/RequestDemoDialog";
+import ContactDialog from "@/components/ContactDialog";
 
 /* ─────────────────────────────────────────────
    Scroll reveal wrapper
@@ -181,11 +182,13 @@ function HeroTopNav({
   setView,
   dark = false,
   onRequestDemo,
+  onContact,
 }: {
   view: HeroView;
   setView: (v: HeroView) => void;
   dark?: boolean;
   onRequestDemo: () => void;
+  onContact: () => void;
 }) {
   const linkBase = dark
     ? "text-white/70 hover:text-white"
@@ -202,12 +205,13 @@ function HeroTopNav({
       >
         CEO &amp; Founder
       </Link>
-      <a
-        href="mailto:ask@lumiom.ai"
+      <button
+        type="button"
+        onClick={onContact}
         className={`hidden sm:inline-flex text-[12px] font-medium tracking-wide transition-colors ${linkBase}`}
       >
         Contact
-      </a>
+      </button>
       <button
         type="button"
         onClick={onRequestDemo}
@@ -227,7 +231,9 @@ function HeroTopNav({
 export default function Home() {
   const [view, setView] = useState<HeroView>("home");
   const [demoOpen, setDemoOpen] = useState(false);
+  const [contactOpen, setContactOpen] = useState(false);
   const openDemo = () => setDemoOpen(true);
+  const openContact = () => setContactOpen(true);
 
   return (
     <>
@@ -237,12 +243,18 @@ export default function Home() {
             ═══════════════════════════════════════════ */}
         <div key={view}>
           {view === "home" ? (
-            <HeroHome view={view} setView={setView} onRequestDemo={openDemo} />
+            <HeroHome
+              view={view}
+              setView={setView}
+              onRequestDemo={openDemo}
+              onContact={openContact}
+            />
           ) : (
             <HeroPlatform
               view={view}
               setView={setView}
               onRequestDemo={openDemo}
+              onContact={openContact}
             />
           )}
         </div>
@@ -494,12 +506,13 @@ export default function Home() {
                 CEO &amp; Founder
               </Link>
               <span className="text-white/20">·</span>
-              <a
-                href="mailto:ask@lumiom.ai"
+              <button
+                type="button"
+                onClick={openContact}
                 className="text-white/55 hover:text-white transition-colors"
               >
-                ask@lumiom.ai
-              </a>
+                Contact
+              </button>
               <span className="text-white/20">·</span>
               <button
                 type="button"
@@ -514,6 +527,7 @@ export default function Home() {
       </main>
 
       <RequestDemoDialog open={demoOpen} onClose={() => setDemoOpen(false)} />
+      <ContactDialog open={contactOpen} onClose={() => setContactOpen(false)} />
     </>
   );
 }
@@ -527,10 +541,12 @@ function HeroHome({
   view,
   setView,
   onRequestDemo,
+  onContact,
 }: {
   view: HeroView;
   setView: (v: HeroView) => void;
   onRequestDemo: () => void;
+  onContact: () => void;
 }) {
   return (
     <section className="relative min-h-screen grid grid-cols-1 lg:grid-cols-[1.15fr_1fr]">
@@ -539,6 +555,7 @@ function HeroHome({
         setView={setView}
         dark={false}
         onRequestDemo={onRequestDemo}
+        onContact={onContact}
       />
 
       <div className="hero-accent absolute left-0 top-0 bottom-0 w-[3px] bg-orange z-20 hidden lg:block" />
@@ -644,10 +661,12 @@ function HeroPlatform({
   view,
   setView,
   onRequestDemo,
+  onContact,
 }: {
   view: HeroView;
   setView: (v: HeroView) => void;
   onRequestDemo: () => void;
+  onContact: () => void;
 }) {
   return (
     <section className="relative min-h-screen bg-navy overflow-hidden flex flex-col justify-center">
@@ -660,6 +679,7 @@ function HeroPlatform({
         setView={setView}
         dark={true}
         onRequestDemo={onRequestDemo}
+        onContact={onContact}
       />
 
       {/* Wordmark (top-left) — same treatment as Home, dark variant */}

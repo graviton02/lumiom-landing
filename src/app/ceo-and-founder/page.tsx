@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import RequestDemoDialog from "@/components/RequestDemoDialog";
+import ContactDialog from "@/components/ContactDialog";
 
 /* ────────────────── Shared wordmark (PNG) ────────────────── */
 function Wordmark({ variant = "light" }: { variant?: "light" | "dark" }) {
@@ -28,6 +29,7 @@ function Wordmark({ variant = "light" }: { variant?: "light" | "dark" }) {
 
 export default function CeoFounderPage() {
   const [demoOpen, setDemoOpen] = useState(false);
+  const [contactOpen, setContactOpen] = useState(false);
 
   return (
     <main className="min-h-screen bg-cream">
@@ -42,12 +44,13 @@ export default function CeoFounderPage() {
             <ArrowLeft className="w-3.5 h-3.5" />
             Home
           </Link>
-          <a
-            href="mailto:ask@lumiom.ai"
+          <button
+            type="button"
+            onClick={() => setContactOpen(true)}
             className="hidden sm:inline-flex text-[12px] font-medium text-navy/70 hover:text-navy transition-colors"
           >
             Contact
-          </a>
+          </button>
           <button
             type="button"
             onClick={() => setDemoOpen(true)}
@@ -169,24 +172,27 @@ export default function CeoFounderPage() {
             &copy; 2026 Lumiom AI. All rights reserved.
           </p>
           <div className="flex items-center gap-5 text-[13px]">
-            <a
-              href="mailto:ask@lumiom.ai"
+            <button
+              type="button"
+              onClick={() => setContactOpen(true)}
               className="text-white/55 hover:text-white transition-colors"
             >
-              ask@lumiom.ai
-            </a>
+              Contact
+            </button>
             <span className="text-white/20">·</span>
-            <a
-              href="mailto:demo@lumiom.ai"
+            <button
+              type="button"
+              onClick={() => setDemoOpen(true)}
               className="text-white/55 hover:text-white transition-colors"
             >
-              demo@lumiom.ai
-            </a>
+              Request a Demo
+            </button>
           </div>
         </div>
       </footer>
 
       <RequestDemoDialog open={demoOpen} onClose={() => setDemoOpen(false)} />
+      <ContactDialog open={contactOpen} onClose={() => setContactOpen(false)} />
     </main>
   );
 }
