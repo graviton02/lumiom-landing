@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
-  Play,
   ArrowDown,
   ArrowRight,
   Lightbulb,
@@ -12,6 +11,16 @@ import {
   Globe,
   Server,
   Building2,
+  Activity,
+  Eye,
+  RefreshCw,
+  Target,
+  Layers,
+  Users,
+  TrendingUp,
+  Gauge,
+  Box,
+  Compass,
 } from "lucide-react";
 import RequestDemoDialog from "@/components/RequestDemoDialog";
 import ContactDialog from "@/components/ContactDialog";
@@ -73,7 +82,7 @@ const silos = [
   },
   {
     label: "Business Process Outsourcing",
-    line: "Process execution knowledge dispersed to offshore centers.",
+    line: "Process knowledge dispersed to offshore centers.",
     color: "#4A7DC7",
     icon: Globe,
   },
@@ -85,142 +94,139 @@ const silos = [
   },
   {
     label: "The Enterprise",
-    line: "Holds the bill. Doesn't own the intelligence. Calls them again.",
+    line: "Holds the bill. Doesn't own the intelligence. Repeats the cycle.",
     color: "#0F1729",
     icon: Building2,
   },
 ];
 
-const functions = ["Operations", "Supply Chain", "Finance", "Commercial"];
+const differentiators = [
+  {
+    icon: Activity,
+    title: "Living Enterprise System Model",
+    body: "A continuous, contextual model of how your business actually runs — not a static map.",
+  },
+  {
+    icon: Eye,
+    title: "Enterprise-Wide Visibility",
+    body: "One connected view across financial, operational, and commercial performance.",
+  },
+  {
+    icon: RefreshCw,
+    title: "Harvest-to-Invest Modernization Flywheel",
+    body: "Self-funding transformation. Savings harvested in one cycle fund the next.",
+  },
+  {
+    icon: Target,
+    title: "AI Applied Only Where It Improves the P&L",
+    body: "No experiments. AI is deployed against measurable financial outcomes — or not at all.",
+  },
+  {
+    icon: Layers,
+    title: "Compounding Organizational Knowledge",
+    body: "Intelligence stays inside your enterprise and gets sharper with every decision.",
+  },
+  {
+    icon: Users,
+    title: "Built by Experienced Enterprise Operators",
+    body: "Designed by people who have run global businesses — not built one for tech-buyers.",
+  },
+];
+
+const methodology = [
+  {
+    title: "Absorb",
+    body: "Connect systems into a contextual enterprise graph.",
+  },
+  {
+    title: "Continuous Intelligence",
+    body: "Identify hidden risks and opportunities in real time.",
+  },
+  {
+    title: "Rationalize, Optimize & Modernize",
+    body: "Harvest savings and reinvest strategically.",
+  },
+  {
+    title: "Execute",
+    body: "Drive operational and organizational action.",
+  },
+  {
+    title: "Value Realization",
+    body: "Deliver measurable business outcomes.",
+  },
+];
+
+const valueLevers = [
+  {
+    icon: TrendingUp,
+    title: "Revenue Growth",
+    body: "Invest toward scalable growth, not scattered bets.",
+  },
+  {
+    icon: Gauge,
+    title: "Operating Margin",
+    body: "Reduce friction and waste across the operating model.",
+  },
+  {
+    icon: Box,
+    title: "Asset Efficiency",
+    body: "Improve utilization of technology, process, and people.",
+  },
+  {
+    icon: Compass,
+    title: "Strategic Prioritization",
+    body: "Evidence-based decisions. Stronger board narratives.",
+  },
+];
 
 /* ─────────────────────────────────────────────
-   Unified wordmark — uses the Lumiom PNG logo
-   (RGBA, transparent). Variant="dark" applies an
-   invert filter so the navy ink reads as cream on
-   the Platform view's dark background. Transparent
-   pixels stay transparent under `invert`.
+   Unified wordmark
    ───────────────────────────────────────────── */
-function Wordmark({
-  variant = "light",
-  size = "md",
-}: {
-  variant?: "light" | "dark";
-  size?: "md" | "lg";
-}) {
-  const dims =
-    size === "lg"
-      ? { w: 170, h: 44 }
-      : { w: 150, h: 38 };
+function Wordmark() {
   return (
     <Image
       src="/lumiom-ai-logo.png"
       alt="Lumiom AI"
-      width={dims.w}
-      height={dims.h}
+      width={150}
+      height={38}
       priority
-      className={variant === "dark" ? "invert" : undefined}
     />
   );
 }
 
 /* ─────────────────────────────────────────────
-   Hero view toggle (small, top-right, theme-aware)
+   Top-right nav
    ───────────────────────────────────────────── */
-type HeroView = "home" | "platform";
-
-function HeroToggle({
-  view,
-  setView,
-  dark = false,
-}: {
-  view: HeroView;
-  setView: (v: HeroView) => void;
-  dark?: boolean;
-}) {
-  const baseText = dark ? "text-white/55" : "text-navy/55";
-  const activeBg = dark ? "bg-white/10 text-white" : "bg-navy/90 text-cream";
-  const border = dark ? "border-white/15" : "border-navy/12";
-
-  return (
-    <div
-      className={`inline-flex items-center gap-0 rounded-full border ${border} p-0.5 font-mono text-[10px] uppercase tracking-[0.18em] backdrop-blur-sm`}
-      role="tablist"
-      aria-label="Hero view"
-    >
-      <button
-        type="button"
-        role="tab"
-        aria-selected={view === "home"}
-        onClick={() => setView("home")}
-        className={`px-3 py-1.5 rounded-full transition-colors ${
-          view === "home" ? activeBg : `${baseText} hover:opacity-100`
-        }`}
-      >
-        Home
-      </button>
-      <button
-        type="button"
-        role="tab"
-        aria-selected={view === "platform"}
-        onClick={() => setView("platform")}
-        className={`px-3 py-1.5 rounded-full transition-colors ${
-          view === "platform" ? activeBg : `${baseText} hover:opacity-100`
-        }`}
-      >
-        Platform
-      </button>
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   Top-right nav: CEO · Contact · Request Demo · Toggle
-   Theme-aware; rendered inside each hero variant.
-   ───────────────────────────────────────────── */
-function HeroTopNav({
-  view,
-  setView,
-  dark = false,
+function TopNav({
   onRequestDemo,
   onContact,
 }: {
-  view: HeroView;
-  setView: (v: HeroView) => void;
-  dark?: boolean;
   onRequestDemo: () => void;
   onContact: () => void;
 }) {
-  const linkBase = dark
-    ? "text-white/70 hover:text-white"
-    : "text-navy/70 hover:text-navy";
-  const demoBase = dark
-    ? "border-white/20 text-white hover:bg-white/10"
-    : "border-navy/15 text-navy hover:bg-navy/[0.04]";
-
   return (
     <div className="absolute top-6 right-6 sm:top-8 sm:right-8 lg:top-10 lg:right-12 z-40 flex items-center gap-3 sm:gap-4">
       <Link
         href="/ceo-and-founder"
-        className={`hidden md:inline-flex text-[12px] font-medium tracking-wide transition-colors ${linkBase}`}
+        className="hidden md:inline-flex text-[12px] font-medium tracking-wide text-navy/70 hover:text-navy transition-colors"
       >
         CEO &amp; Founder
       </Link>
       <button
         type="button"
         onClick={onContact}
-        className={`hidden sm:inline-flex text-[12px] font-medium tracking-wide transition-colors ${linkBase}`}
+        className="hidden sm:inline-flex text-[12px] font-medium tracking-wide text-navy/70 hover:text-navy transition-colors"
       >
         Contact
       </button>
       <button
         type="button"
         onClick={onRequestDemo}
-        className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-[12px] font-semibold tracking-wide transition-colors ${demoBase}`}
+        className="inline-flex items-center gap-1.5 rounded-full border border-navy/15 px-3.5 py-1.5 text-[12px] font-semibold tracking-wide text-navy hover:bg-navy/[0.04] transition-colors"
       >
         Request Demo
         <ArrowRight className="w-3 h-3" />
       </button>
-      <HeroToggle view={view} setView={setView} dark={dark} />
     </div>
   );
 }
@@ -229,7 +235,6 @@ function HeroTopNav({
    PAGE
    ═════════════════════════════════════════════════════════════════ */
 export default function Home() {
-  const [view, setView] = useState<HeroView>("home");
   const [demoOpen, setDemoOpen] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
   const openDemo = () => setDemoOpen(true);
@@ -239,25 +244,96 @@ export default function Home() {
     <>
       <main className="overflow-x-hidden">
         {/* ═══════════════════════════════════════════
-            SECTION 1 — HERO (with view toggle)
+            SECTION 1 — HERO (unified, declarative)
             ═══════════════════════════════════════════ */}
-        <div key={view}>
-          {view === "home" ? (
-            <HeroHome
-              view={view}
-              setView={setView}
-              onRequestDemo={openDemo}
-              onContact={openContact}
-            />
-          ) : (
-            <HeroPlatform
-              view={view}
-              setView={setView}
-              onRequestDemo={openDemo}
-              onContact={openContact}
-            />
-          )}
-        </div>
+        <section className="relative min-h-screen grid grid-cols-1 lg:grid-cols-[1.15fr_1fr]">
+          <TopNav onRequestDemo={openDemo} onContact={openContact} />
+
+          <div className="hero-accent absolute left-0 top-0 bottom-0 w-[3px] bg-orange z-20 hidden lg:block" />
+
+          {/* Left panel */}
+          <div className="relative z-10 flex flex-col justify-center px-8 sm:px-12 md:px-16 lg:px-24 py-32 lg:py-24 order-2 lg:order-1 bg-cream">
+            <div className="hero-logo absolute top-8 left-8 sm:left-12 md:left-16 lg:left-24">
+              <Wordmark />
+              <p className="mt-2 font-mono text-[10px] tracking-[0.24em] uppercase text-navy/55">
+                Enterprise Intelligence Platform
+              </p>
+            </div>
+
+            <p className="hero-eyebrow font-mono text-[11px] font-semibold tracking-[0.3em] text-orange uppercase mb-6 mt-8">
+              A New Category
+            </p>
+
+            <h1 className="hero-headline font-serif text-[40px] sm:text-[52px] md:text-[60px] lg:text-[68px] leading-[1.02] text-navy mb-7">
+              The Enterprise
+              <br className="hidden sm:block" /> Intelligence{" "}
+              <em>Platform.</em>
+            </h1>
+
+            <p className="hero-subhead text-base md:text-[17px] text-text-secondary leading-relaxed max-w-md mb-10">
+              Lumiom reads your business as one connected system —
+              translating enterprise signals into decisions, execution, and
+              measurable P&amp;L outcomes. Built by operators, for operators.
+            </p>
+
+            <div className="hero-ctas flex flex-col sm:flex-row gap-3">
+              <button
+                type="button"
+                onClick={openDemo}
+                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-orange text-white text-[15px] font-semibold rounded-lg hover:bg-orange-light transition-all duration-300 shadow-[0_2px_16px_rgba(232,108,58,0.25)] hover:shadow-[0_4px_24px_rgba(232,108,58,0.35)] hover:-translate-y-px"
+              >
+                Request a Demo Customized to Your Enterprise
+                <ArrowRight className="w-4 h-4" />
+              </button>
+              <a
+                href="#problem"
+                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 border border-navy/10 text-navy text-[15px] font-semibold rounded-lg hover:bg-navy/[0.03] transition-all duration-300"
+              >
+                <ArrowDown className="w-4 h-4" />
+                Read the Thesis
+              </a>
+            </div>
+          </div>
+
+          {/* Right panel — Mamatha photo + quote */}
+          <div className="relative order-1 lg:order-2 flex flex-col justify-center px-8 sm:px-12 md:px-16 lg:px-16 xl:px-20 py-16 lg:py-24 bg-cream overflow-hidden">
+            <div className="hero-ambient-drift absolute -right-16 top-[10%] w-[240px] h-[240px] rounded-full bg-orange/[0.08] hidden lg:block pointer-events-none" />
+            <div className="hero-ambient-pulse absolute -left-16 bottom-[18%] w-[180px] h-[180px] rounded-full bg-orange/[0.05] blur-2xl pointer-events-none hidden lg:block" />
+
+            <div className="hero-photo relative flex flex-col items-start gap-5 max-w-lg lg:max-w-xl">
+              <div className="hero-image-float relative w-[70%] aspect-square rounded-2xl overflow-hidden bg-white/50 ring-1 ring-navy/[0.06]">
+                <Image
+                  src="/chamarthi-mamatha.jpg"
+                  alt="Mamatha Chamarthi, Founder & CEO, Lumiom AI"
+                  fill
+                  className="object-cover"
+                  sizes="(min-width: 1024px) 28vw, 65vw"
+                  priority
+                />
+              </div>
+
+              <div className="relative flex flex-col gap-5 w-full">
+                <div className="w-10 h-[3px] bg-orange rounded-full" />
+                <blockquote className="font-serif text-[22px] sm:text-[26px] lg:text-[28px] leading-[1.32] text-navy/82 italic">
+                  &ldquo;Most companies still approach AI as experimentation.
+                  We built Lumiom to make transformation measurable,
+                  self-funding, and continuous — directly connected to
+                  P&amp;L outcomes.&rdquo;
+                </blockquote>
+                <div className="pt-1">
+                  <p className="text-[16px] font-semibold text-navy">
+                    Mamatha Chamarthi
+                  </p>
+                  <p className="text-[13px] text-text-secondary mt-0.5">
+                    Founder &amp; CEO, Lumiom AI
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="grain absolute inset-0 pointer-events-none z-[15]" />
+        </section>
 
         {/* ═══════════════════════════════════════════
             SECTION 2 — THE PROBLEM
@@ -274,19 +350,29 @@ export default function Home() {
             </Reveal>
 
             <Reveal delay={100}>
-              <h2 className="font-serif text-[32px] sm:text-[40px] md:text-[44px] lg:text-[48px] leading-[1.1] text-navy mb-16 max-w-3xl">
-                25 Years of Dispersed Intelligence.
+              <h2 className="font-serif text-[32px] sm:text-[40px] md:text-[44px] lg:text-[48px] leading-[1.1] text-navy mb-7 max-w-3xl">
+                Fragmented Systems. Disconnected Data.
                 <br />
-                No One Owns the <em>Outcome.</em>
+                Siloed <em>Decisions.</em>
               </h2>
             </Reveal>
 
-            {/* Silo cards — equal icon↔title spacing (flex gap, no justify-between) */}
+            <Reveal delay={180}>
+              <p className="text-[17px] md:text-lg text-text-secondary leading-relaxed max-w-2xl mb-16">
+                Enterprises operate through fragmented systems, disconnected
+                data, and siloed decision-making. Transformation efforts
+                don&apos;t fail from lack of ambition or talent — they fail
+                because organizations lack continuous visibility, coordinated
+                execution, and measurable accountability. The problem is
+                structural.
+              </p>
+            </Reveal>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-4">
               {silos.map((silo, i) => {
                 const Icon = silo.icon;
                 return (
-                  <Reveal key={silo.label} delay={200 + i * 120}>
+                  <Reveal key={silo.label} delay={240 + i * 120}>
                     <div className="relative bg-white rounded-xl p-7 pb-7 min-h-[220px] lg:min-h-[240px] flex flex-col border border-black/[0.04] shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
                       <div
                         className="absolute top-0 left-0 right-0 h-[3px] rounded-t-xl"
@@ -319,12 +405,12 @@ export default function Home() {
         </section>
 
         {/* ═══════════════════════════════════════════
-            SECTION 3 — THE IMPERATIVE
+            SECTION 3 — THE IMPERATIVE (stat block)
             ═══════════════════════════════════════════ */}
         <section className="relative py-24 md:py-32 lg:py-40 px-8 sm:px-12 md:px-16 lg:px-24 bg-navy overflow-hidden">
           <div className="absolute top-0 left-8 sm:left-12 md:left-16 lg:left-24 w-[3px] h-20 bg-orange" />
 
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-5xl mx-auto">
             <Reveal>
               <p className="text-[11px] font-semibold tracking-[0.3em] text-orange uppercase mb-6">
                 The Imperative
@@ -332,20 +418,46 @@ export default function Home() {
             </Reveal>
 
             <Reveal delay={150}>
-              <h2 className="font-serif text-[32px] sm:text-[40px] md:text-[48px] lg:text-[54px] leading-[1.08] text-white mb-10 max-w-3xl">
+              <h2 className="font-serif text-[32px] sm:text-[40px] md:text-[48px] lg:text-[54px] leading-[1.08] text-white mb-14 max-w-3xl">
                 This Isn&apos;t a Data Problem.
                 <br />
                 It&apos;s a <em className="text-orange">Decision</em> Problem.
               </h2>
             </Reveal>
 
-            <Reveal delay={300}>
+            {/* Stat block */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-white/10 rounded-2xl overflow-hidden border border-white/10 mb-12">
+              {[
+                {
+                  num: "$250B",
+                  label: "spent annually on enterprise transformation",
+                },
+                {
+                  num: "70–88%",
+                  label: "of transformation programs fail to deliver stated goals",
+                },
+                {
+                  num: "$1.6T",
+                  label: "lost in enterprise value every year",
+                },
+              ].map((s, i) => (
+                <Reveal key={s.num} delay={300 + i * 120}>
+                  <div className="bg-navy-light/40 backdrop-blur-sm p-8 md:p-10 h-full">
+                    <p className="font-serif text-[44px] md:text-[56px] lg:text-[64px] leading-none text-white mb-4">
+                      {s.num}
+                    </p>
+                    <p className="text-[14px] md:text-[15px] text-white/55 leading-relaxed">
+                      {s.label}
+                    </p>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+
+            <Reveal delay={650}>
               <p className="text-[17px] md:text-lg text-white/55 leading-relaxed max-w-2xl">
-                $250 billion spent annually on enterprise transformation.
-                70&ndash;88% of programs fail to achieve their stated goals.
-                $1.6 trillion wasted every year. The systems were never built
-                to help leaders make connected, real-time decisions across the
-                business.
+                The systems were never built to help leaders make connected,
+                real-time decisions across the business.
               </p>
             </Reveal>
           </div>
@@ -354,108 +466,196 @@ export default function Home() {
         </section>
 
         {/* ═══════════════════════════════════════════
-            SECTION 4 — THE SOLUTION
+            SECTION 4 — WHY LUMIOM (6 differentiators)
             ═══════════════════════════════════════════ */}
         <section className="relative py-24 md:py-32 lg:py-36 px-8 sm:px-12 md:px-16 lg:px-24 bg-warm-white">
-          <div className="max-w-4xl mx-auto text-center">
+          <div className="max-w-6xl mx-auto">
             <Reveal>
               <p className="text-[11px] font-semibold tracking-[0.3em] text-orange uppercase mb-5">
-                The Solution
+                Why Lumiom
               </p>
             </Reveal>
 
             <Reveal delay={100}>
-              <h2 className="font-serif text-[32px] sm:text-[40px] md:text-[46px] lg:text-[52px] leading-[1.08] text-navy mb-5">
-                The Industrial AI
+              <h2 className="font-serif text-[32px] sm:text-[40px] md:text-[44px] lg:text-[48px] leading-[1.1] text-navy mb-16 max-w-3xl">
+                Six Things No Stack
                 <br />
-                Operating <em>Platform.</em>
+                Has Done <em>Together.</em>
               </h2>
             </Reveal>
 
-            <Reveal delay={180}>
-              <p className="font-mono text-[11px] sm:text-xs tracking-[0.24em] uppercase text-orange/90 mb-8">
-                Continuous Horizontal Intelligence
-              </p>
-            </Reveal>
-
-            <Reveal delay={250}>
-              <p className="text-base md:text-[17px] text-text-secondary leading-relaxed max-w-xl mx-auto mb-20">
-                Lumiom is the first platform that reassembles your enterprise
-                intelligence&nbsp;&mdash; continuous, horizontal, and
-                outcome-linked. Not another consultant. Not another vendor.
-                The first partner fully accountable for transformation
-                outcomes.
-              </p>
-            </Reveal>
-
-            {/* ── System diagram ── */}
-            <Reveal delay={350}>
-              <div className="flex flex-col items-center">
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 w-full max-w-[620px]">
-                  {functions.map((name) => (
-                    <div
-                      key={name}
-                      className="py-4 px-3 bg-white rounded-lg text-sm font-semibold text-navy border border-black/[0.06] shadow-[0_1px_2px_rgba(0,0,0,0.03)]"
-                    >
-                      {name}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-5">
+              {differentiators.map((d, i) => {
+                const Icon = d.icon;
+                return (
+                  <Reveal key={d.title} delay={200 + i * 90}>
+                    <div className="relative bg-white rounded-xl p-7 h-full flex flex-col border border-black/[0.04] shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+                      <div className="w-11 h-11 rounded-lg flex items-center justify-center bg-orange/[0.08] mb-5">
+                        <Icon
+                          className="w-5 h-5 text-orange"
+                          strokeWidth={1.8}
+                        />
+                      </div>
+                      <p className="font-semibold text-navy text-[17px] mb-3 leading-tight">
+                        {d.title}
+                      </p>
+                      <p className="text-text-secondary text-[14px] leading-relaxed">
+                        {d.body}
+                      </p>
                     </div>
-                  ))}
-                </div>
+                  </Reveal>
+                );
+              })}
+            </div>
+          </div>
+        </section>
 
-                <svg
-                  viewBox="0 0 620 32"
-                  className="hidden lg:block w-full max-w-[620px] h-8 text-navy/12"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                >
-                  <line x1="78" y1="0" x2="310" y2="32" />
-                  <line x1="233" y1="0" x2="310" y2="32" />
-                  <line x1="388" y1="0" x2="310" y2="32" />
-                  <line x1="543" y1="0" x2="310" y2="32" />
-                </svg>
-                <div className="lg:hidden flex justify-center">
-                  <div className="w-px h-8 bg-navy/12" />
-                </div>
-
-                <div className="w-full max-w-md py-5 px-6 bg-navy text-white rounded-xl font-semibold text-[15px] md:text-base ring-2 ring-orange/20 shadow-[0_4px_32px_rgba(15,23,41,0.25)]">
-                  Lumiom &middot; Continuous Horizontal Intelligence
-                </div>
-
-                <div className="flex flex-col items-center">
-                  <div className="w-px h-7 bg-orange/30" />
-                  <ArrowDown className="w-4 h-4 text-orange -mt-0.5" />
-                </div>
-
-                <div className="py-5 px-8 bg-orange/[0.05] border border-orange/12 rounded-xl max-w-xs mt-1">
-                  <p className="font-semibold text-navy text-[15px]">
-                    Measurable Outcomes
-                  </p>
-                  <p className="text-sm text-text-secondary mt-1">
-                    We only win when you win.
-                  </p>
-                </div>
-              </div>
+        {/* ═══════════════════════════════════════════
+            SECTION 5 — THE RADICAL SHIFT
+            ═══════════════════════════════════════════ */}
+        <section className="relative py-24 md:py-32 lg:py-36 px-8 sm:px-12 md:px-16 lg:px-24 bg-cream">
+          <div className="max-w-4xl mx-auto text-center">
+            <Reveal>
+              <p className="text-[11px] font-semibold tracking-[0.3em] text-orange uppercase mb-5">
+                The Radical Shift
+              </p>
             </Reveal>
 
-            {/* End CTA — Request Demo, orange, prominent */}
-            <Reveal delay={450}>
-              <div className="mt-20">
-                <button
-                  type="button"
-                  onClick={openDemo}
-                  className="inline-flex items-center gap-2.5 px-9 py-4 bg-orange text-white text-[16px] font-semibold rounded-lg hover:bg-orange-light transition-all duration-300 shadow-[0_4px_24px_rgba(232,108,58,0.32)] hover:shadow-[0_6px_32px_rgba(232,108,58,0.45)] hover:-translate-y-px"
-                >
-                  Request a Demo
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              </div>
+            <Reveal delay={100}>
+              <h2 className="font-serif text-[32px] sm:text-[40px] md:text-[46px] lg:text-[52px] leading-[1.08] text-navy mb-8">
+                Beyond Dashboards.
+                <br />
+                Beyond <em>Reports.</em>
+              </h2>
+            </Reveal>
+
+            <Reveal delay={200}>
+              <p className="text-base md:text-[17px] text-text-secondary leading-relaxed max-w-xl mx-auto mb-8">
+                The future enterprise moves past static dashboards and
+                periodic reporting. Lumiom is a living, always-on intelligence
+                system that continuously connects insight, decisions, and
+                execution in real time — so organizations can act faster,
+                align better, and modernize continuously.
+              </p>
+            </Reveal>
+
+            <Reveal delay={300}>
+              <p className="font-mono text-[11px] sm:text-xs tracking-[0.28em] uppercase text-orange/90">
+                Continuous · Horizontal · Outcome-Linked
+              </p>
             </Reveal>
           </div>
         </section>
 
         {/* ═══════════════════════════════════════════
-            SECTION 5 — TESTIMONIAL PLACEHOLDER
+            SECTION 6 — THE METHODOLOGY (diagram + 5 steps)
+            ═══════════════════════════════════════════ */}
+        <section className="relative py-24 md:py-32 lg:py-36 px-8 sm:px-12 md:px-16 lg:px-24 bg-warm-white">
+          <div className="max-w-5xl mx-auto">
+            <Reveal>
+              <p className="text-[11px] font-semibold tracking-[0.3em] text-orange uppercase mb-5">
+                The Methodology
+              </p>
+            </Reveal>
+
+            <Reveal delay={100}>
+              <h2 className="font-serif text-[32px] sm:text-[40px] md:text-[44px] lg:text-[48px] leading-[1.1] text-navy mb-7 max-w-3xl">
+                Five Steps.
+                <br />
+                One <em>Continuous</em> Loop.
+              </h2>
+            </Reveal>
+
+            <Reveal delay={180}>
+              <p className="text-[17px] md:text-lg text-text-secondary leading-relaxed max-w-2xl mb-14">
+                Lumiom runs as a continuous loop across your enterprise —
+                absorbing signal, surfacing intelligence, modernizing
+                operations, executing change, and realizing value.
+              </p>
+            </Reveal>
+
+            <Reveal delay={260}>
+              <div className="relative w-full aspect-[16/9] rounded-2xl bg-white border border-black/[0.04] shadow-[0_1px_3px_rgba(0,0,0,0.03)] mb-12 overflow-hidden">
+                <Image
+                  src="/lumiom-methodology-loop.png"
+                  alt="The Lumiom five-step continuous methodology loop: Absorb, Continuous Intelligence, Rationalize Optimize and Modernize, Execute, Value Realization."
+                  fill
+                  className="object-contain"
+                  sizes="(min-width: 1024px) 1000px, 90vw"
+                />
+              </div>
+            </Reveal>
+
+            {/* ── 5-step legend ── */}
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
+              {methodology.map((step, i) => (
+                <Reveal key={step.title} delay={340 + i * 90}>
+                  <div className="bg-white rounded-xl p-5 h-full border border-black/[0.04] shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+                    <p className="font-mono text-[10px] tracking-[0.24em] uppercase text-orange mb-3">
+                      Step {i + 1}
+                    </p>
+                    <p className="font-semibold text-navy text-[15px] mb-2 leading-tight">
+                      {step.title}
+                    </p>
+                    <p className="text-text-secondary text-[13px] leading-relaxed">
+                      {step.body}
+                    </p>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ═══════════════════════════════════════════
+            SECTION 7 — VALUE ACCELERATION (4 P&L levers)
+            ═══════════════════════════════════════════ */}
+        <section className="relative py-24 md:py-32 lg:py-36 px-8 sm:px-12 md:px-16 lg:px-24 bg-navy overflow-hidden">
+          <div className="absolute top-0 left-8 sm:left-12 md:left-16 lg:left-24 w-[3px] h-20 bg-orange" />
+
+          <div className="max-w-6xl mx-auto">
+            <Reveal>
+              <p className="text-[11px] font-semibold tracking-[0.3em] text-orange uppercase mb-6">
+                Value Acceleration
+              </p>
+            </Reveal>
+
+            <Reveal delay={150}>
+              <h2 className="font-serif text-[32px] sm:text-[40px] md:text-[46px] lg:text-[52px] leading-[1.08] text-white mb-14 max-w-3xl">
+                Four Levers.
+                <br />
+                One <em className="text-orange">P&amp;L.</em>
+              </h2>
+            </Reveal>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {valueLevers.map((lever, i) => {
+                const Icon = lever.icon;
+                return (
+                  <Reveal key={lever.title} delay={250 + i * 100}>
+                    <div className="relative bg-navy-light/40 backdrop-blur-sm rounded-xl p-7 h-full border border-white/[0.08]">
+                      <div className="w-11 h-11 rounded-lg flex items-center justify-center bg-orange/[0.12] mb-5">
+                        <Icon
+                          className="w-5 h-5 text-orange"
+                          strokeWidth={1.8}
+                        />
+                      </div>
+                      <p className="font-semibold text-white text-[17px] mb-3 leading-tight">
+                        {lever.title}
+                      </p>
+                      <p className="text-white/55 text-[14px] leading-relaxed">
+                        {lever.body}
+                      </p>
+                    </div>
+                  </Reveal>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+        {/* ═══════════════════════════════════════════
+            SECTION 8 — TESTIMONIAL
             ═══════════════════════════════════════════ */}
         <section className="relative py-20 md:py-24 lg:py-28 px-8 sm:px-12 md:px-16 lg:px-24 bg-cream">
           <div className="max-w-3xl mx-auto">
@@ -486,6 +686,42 @@ export default function Home() {
                   </p>
                 </div>
               </div>
+            </Reveal>
+          </div>
+        </section>
+
+        {/* ═══════════════════════════════════════════
+            SECTION 9 — FINAL CTA
+            ═══════════════════════════════════════════ */}
+        <section className="relative py-24 md:py-28 px-8 sm:px-12 md:px-16 lg:px-24 bg-warm-white">
+          <div className="max-w-3xl mx-auto text-center">
+            <Reveal>
+              <p className="font-mono text-[11px] tracking-[0.3em] uppercase text-orange mb-5">
+                What&apos;s Next
+              </p>
+            </Reveal>
+
+            <Reveal delay={100}>
+              <h2 className="font-serif text-[32px] sm:text-[40px] md:text-[44px] leading-[1.1] text-navy mb-6">
+                See Lumiom Mapped to <em>Your</em> Enterprise.
+              </h2>
+            </Reveal>
+
+            <Reveal delay={200}>
+              <p className="text-[16px] text-text-secondary leading-relaxed max-w-xl mx-auto mb-10">
+                Your systems. Your P&amp;L. One connected operating model.
+              </p>
+            </Reveal>
+
+            <Reveal delay={300}>
+              <button
+                type="button"
+                onClick={openDemo}
+                className="inline-flex items-center gap-2.5 px-9 py-4 bg-orange text-white text-[16px] font-semibold rounded-lg hover:bg-orange-light transition-all duration-300 shadow-[0_4px_24px_rgba(232,108,58,0.32)] hover:shadow-[0_6px_32px_rgba(232,108,58,0.45)] hover:-translate-y-px"
+              >
+                Request a Demo Customized to Your Enterprise
+                <ArrowRight className="w-4 h-4" />
+              </button>
             </Reveal>
           </div>
         </section>
@@ -529,238 +765,5 @@ export default function Home() {
       <RequestDemoDialog open={demoOpen} onClose={() => setDemoOpen(false)} />
       <ContactDialog open={contactOpen} onClose={() => setContactOpen(false)} />
     </>
-  );
-}
-
-/* ═════════════════════════════════════════════════════════════════
-   HERO VIEW A — HOME (editorial perspective)
-   — Unified wordmark (no PNG), no Mamatha eyebrow, orange-line-only
-     quote graphic, animated image area.
-   ═════════════════════════════════════════════════════════════════ */
-function HeroHome({
-  view,
-  setView,
-  onRequestDemo,
-  onContact,
-}: {
-  view: HeroView;
-  setView: (v: HeroView) => void;
-  onRequestDemo: () => void;
-  onContact: () => void;
-}) {
-  return (
-    <section className="relative min-h-screen grid grid-cols-1 lg:grid-cols-[1.15fr_1fr]">
-      <HeroTopNav
-        view={view}
-        setView={setView}
-        dark={false}
-        onRequestDemo={onRequestDemo}
-        onContact={onContact}
-      />
-
-      <div className="hero-accent absolute left-0 top-0 bottom-0 w-[3px] bg-orange z-20 hidden lg:block" />
-
-      {/* ── Left panel: Copy ── */}
-      <div className="relative z-10 flex flex-col justify-center px-8 sm:px-12 md:px-16 lg:px-24 py-32 lg:py-24 order-2 lg:order-1 bg-cream">
-        {/* Wordmark + positioning tagline (unified with Platform view) */}
-        <div className="hero-logo absolute top-8 left-8 sm:left-12 md:left-16 lg:left-24">
-          <Wordmark variant="light" />
-          <p className="mt-2 font-mono text-[10px] tracking-[0.24em] uppercase text-navy/55">
-            Industrial AI Operating Platform
-          </p>
-        </div>
-
-        {/* Eyebrow "A perspective by..." REMOVED per feedback #7 */}
-
-        {/* Headline — bold + italic contrast (feedback #5) */}
-        <h1 className="hero-headline font-serif text-[36px] sm:text-[44px] md:text-[52px] lg:text-[60px] leading-[1.05] text-navy mb-7 mt-8">
-          The Way Companies
-          <br className="hidden sm:block" /> Make{" "}
-          <strong className="font-bold">Decisions</strong>
-          <br className="hidden sm:block" /> Is <em>Broken</em>
-        </h1>
-
-        <p className="hero-subhead text-base md:text-[17px] text-text-secondary leading-relaxed max-w-md mb-10">
-          $1.6 trillion lost annually to failed transformations. 70&ndash;88%
-          of programs never deliver. A perspective on why&nbsp;&mdash; and
-          what needs to change.
-        </p>
-
-        <div className="hero-ctas flex flex-col sm:flex-row gap-3">
-          <a
-            href="#problem"
-            className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-orange text-white text-[15px] font-semibold rounded-lg hover:bg-orange-light transition-all duration-300 shadow-[0_2px_16px_rgba(232,108,58,0.25)] hover:shadow-[0_4px_24px_rgba(232,108,58,0.35)] hover:-translate-y-px"
-          >
-            Read the Perspective
-            <ArrowDown className="w-4 h-4" />
-          </a>
-          <a
-            href="#"
-            className="inline-flex items-center justify-center gap-2 px-7 py-3.5 border border-navy/10 text-navy text-[15px] font-semibold rounded-lg hover:bg-navy/[0.03] transition-all duration-300"
-          >
-            <Play className="w-4 h-4" />
-            Watch 2-Min Brief
-          </a>
-        </div>
-      </div>
-
-      {/* ── Right panel: Network-nodes image + Quote ── */}
-      <div className="relative order-1 lg:order-2 flex flex-col justify-center px-8 sm:px-12 md:px-16 lg:px-16 xl:px-20 py-16 lg:py-24 bg-cream overflow-hidden">
-        {/* Ambient drifting circle behind image */}
-        <div className="hero-ambient-drift absolute -right-16 top-[10%] w-[240px] h-[240px] rounded-full bg-orange/[0.08] hidden lg:block pointer-events-none" />
-
-        {/* Second ambient glow, softer, lower */}
-        <div className="hero-ambient-pulse absolute -left-16 bottom-[18%] w-[180px] h-[180px] rounded-full bg-orange/[0.05] blur-2xl pointer-events-none hidden lg:block" />
-
-        <div className="hero-photo relative flex flex-col items-start gap-10 max-w-lg lg:max-w-xl">
-          {/* Network-nodes image — gently floating */}
-          <div className="hero-image-float relative w-full aspect-square sm:aspect-[4/3] rounded-2xl overflow-hidden bg-white/50 ring-1 ring-navy/[0.06]">
-            <Image
-              src="/hero-network-nodes.jpg"
-              alt="Dispersed intelligence, connected"
-              fill
-              className="object-cover mix-blend-multiply"
-              sizes="(min-width: 1024px) 40vw, 90vw"
-              priority
-            />
-            {/* Subtle animated inner glow overlay */}
-            <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-orange/[0.05] pointer-events-none" />
-          </div>
-
-          {/* Quote + attribution — orange line only (no decorative " per feedback #9) */}
-          <div className="relative flex flex-col gap-5 w-full">
-            <div className="w-10 h-[3px] bg-orange rounded-full" />
-            <blockquote className="font-serif text-[24px] sm:text-[28px] lg:text-[30px] leading-[1.3] text-navy/80 italic">
-              &ldquo;Industrial enterprises have spent 25 years dispersing
-              their intelligence&nbsp;&mdash; to consultants, integrators, and
-              outsourcers. They hold the bill. They don&apos;t own the
-              intelligence. They don&apos;t always see results.&rdquo;
-            </blockquote>
-            <div className="pt-1">
-              <p className="text-[16px] font-semibold text-navy">
-                Mamatha Chamarthi
-              </p>
-              <p className="text-[13px] text-text-secondary mt-0.5">
-                Founder &amp; CEO, Lumiom AI
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="grain absolute inset-0 pointer-events-none z-[15]" />
-    </section>
-  );
-}
-
-/* ═════════════════════════════════════════════════════════════════
-   HERO VIEW B — PLATFORM (operator-console aesthetic)
-   Unified wordmark on top-left (matches Home).
-   ═════════════════════════════════════════════════════════════════ */
-function HeroPlatform({
-  view,
-  setView,
-  onRequestDemo,
-  onContact,
-}: {
-  view: HeroView;
-  setView: (v: HeroView) => void;
-  onRequestDemo: () => void;
-  onContact: () => void;
-}) {
-  return (
-    <section className="relative min-h-screen bg-navy overflow-hidden flex flex-col justify-center">
-      <div className="platform-grid-bg absolute inset-0 pointer-events-none" />
-      <div className="absolute -top-40 -right-32 w-[680px] h-[680px] rounded-full bg-orange/[0.06] blur-[120px] pointer-events-none" />
-      <div className="absolute -bottom-40 -left-40 w-[680px] h-[680px] rounded-full bg-navy-light/60 blur-[140px] pointer-events-none" />
-
-      <HeroTopNav
-        view={view}
-        setView={setView}
-        dark={true}
-        onRequestDemo={onRequestDemo}
-        onContact={onContact}
-      />
-
-      {/* Wordmark (top-left) — same treatment as Home, dark variant */}
-      <div className="platform-kicker absolute top-8 left-8 sm:left-12 md:left-16 lg:left-24">
-        <Wordmark variant="dark" />
-      </div>
-
-      <div className="relative z-10 max-w-6xl mx-auto w-full px-8 sm:px-12 md:px-16 lg:px-24 py-32 lg:py-20">
-        <div className="platform-kicker flex items-center gap-3 mb-10">
-          <span className="h-1.5 w-1.5 rounded-full bg-orange live-dot" />
-          <span className="font-mono text-[11px] tracking-[0.3em] uppercase text-orange/85">
-            MMXXVI · The Platform
-          </span>
-          <span className="hidden sm:inline-block flex-1 h-px bg-white/10 max-w-[180px]" />
-        </div>
-
-        <h1 className="platform-headline font-serif text-[42px] sm:text-[60px] md:text-[76px] lg:text-[92px] leading-[0.98] text-white mb-8 max-w-4xl">
-          The Industrial AI
-          <br />
-          Operating <em className="text-orange">Platform.</em>
-        </h1>
-
-        <p className="platform-subhead text-[16px] sm:text-[18px] md:text-[20px] text-white/65 leading-[1.55] max-w-xl mb-12">
-          Continuous horizontal intelligence that never leaves your
-          enterprise. The first partner fully accountable for transformation
-          outcomes.
-        </p>
-
-        <div className="platform-ctas flex flex-col sm:flex-row gap-3 mb-20">
-          <button
-            type="button"
-            onClick={onRequestDemo}
-            className="inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-orange text-white text-[15px] font-semibold rounded-lg hover:bg-orange-light transition-all duration-300 shadow-[0_2px_24px_rgba(232,108,58,0.3)] hover:shadow-[0_4px_32px_rgba(232,108,58,0.45)] hover:-translate-y-px"
-          >
-            Request a Demo
-            <ArrowRight className="w-4 h-4" />
-          </button>
-          <a
-            href="#problem"
-            className="inline-flex items-center justify-center gap-2 px-7 py-3.5 border border-white/15 text-white/90 text-[15px] font-semibold rounded-lg hover:bg-white/[0.04] hover:border-white/25 transition-all duration-300"
-          >
-            <ArrowDown className="w-4 h-4" />
-            Read the Thesis
-          </a>
-        </div>
-
-        <div className="platform-ticker relative mt-8">
-          <div className="flex items-center gap-3 mb-4">
-            <span className="h-px w-8 bg-orange/50" />
-            <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-white/45">
-              Operating Layer · Live
-            </span>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-white/10 rounded-xl overflow-hidden border border-white/10">
-            {functions.map((name, i) => (
-              <div
-                key={name}
-                className="relative bg-navy-light/40 backdrop-blur-sm px-4 py-5 sm:py-6 flex items-center justify-between"
-              >
-                <span className="font-mono text-[11px] tracking-[0.2em] uppercase text-white/75">
-                  {name}
-                </span>
-                <span
-                  className="h-1.5 w-1.5 rounded-full bg-orange live-dot"
-                  style={{ animationDelay: `${i * 0.25}s` }}
-                />
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-px rounded-b-xl border-x border-b border-white/10 bg-gradient-to-r from-orange/[0.08] via-white/[0.02] to-orange/[0.08] px-5 py-4 flex items-center justify-between">
-            <span className="font-mono text-[11px] tracking-[0.28em] uppercase text-orange">
-              Lumiom · Continuous Horizontal Intelligence
-            </span>
-            <span className="hidden sm:inline-block font-mono text-[10px] tracking-[0.2em] uppercase text-white/40">
-              4 domains / 1 platform
-            </span>
-          </div>
-        </div>
-      </div>
-    </section>
   );
 }

@@ -22,9 +22,9 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Lumiom — The System of Decision",
+  title: "Lumiom — The Enterprise Intelligence Platform",
   description:
-    "A perspective from CEO Mamatha Chamarthi on why industrial enterprises struggle to act in time — and what needs to change.",
+    "Lumiom reads your business as one connected system — translating enterprise signals into decisions, execution, and measurable P&L outcomes. Built by operators, for operators.",
 };
 
 export default function RootLayout({
