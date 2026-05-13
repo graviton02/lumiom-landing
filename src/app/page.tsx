@@ -354,7 +354,7 @@ export default function Home() {
             <Reveal delay={240}>
               <div className="relative w-full aspect-[16/9] rounded-2xl bg-white border border-black/[0.04] shadow-[0_1px_3px_rgba(0,0,0,0.03)] mb-12 overflow-hidden">
                 <Image
-                  src="/lumiom-problem-diagram.png"
+                  src="/lumiom-problem-diagram-v2.png"
                   alt="The fragmented enterprise: five operating systems on the bottom, board-view outcomes on the top, with the enterprise intelligence layer missing in between."
                   fill
                   className="object-contain"
