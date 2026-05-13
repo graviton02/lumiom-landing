@@ -92,40 +92,46 @@ const stats = [
 
 const timeline = [
   {
-    when: "2024 →",
+    when: "Jan 2026 →",
     role: "Founder & CEO",
     org: "Lumiom AI",
-    line: "Productizing the operating method she has refined across three decades.",
+    line: "Productizing the operating method refined across three decades — Real-Time Enterprise Intelligence built to deliver business impact.",
   },
   {
-    when: "2023 – 2024",
-    role: "SVP, Strategy & Transformation",
+    when: "2024 – 2025",
+    role: "Chief Digital Officer",
     org: "Goodyear Tire & Rubber",
-    line: "Led the tire industry's first enterprise-scale AI transformation.",
+    line: "Led the tire industry's first enterprise-scale AI transformation — embedded into the operating model, not bolted onto it.",
   },
   {
-    when: "2019 – 2023",
-    role: "SVP, Software Business & Product Planning",
+    when: "2021 – 2024",
+    role: "Chief Software Business Growth Officer",
     org: "Stellantis",
-    line: "Built a new $23B software entity across 14 brands and three continents — targeting 20–40% software margins versus the 9–12% automotive band.",
+    line: "Built and ran the software business across 14 brands and three continents — targeting €20B in revenue by 2030 and software-grade margins versus the 9–12% automotive band.",
   },
   {
-    when: "2016 – 2019",
+    when: "2019 – 2021",
+    role: "Chief Digital Information Officer",
+    org: "FCA Fiat Chrysler Automobiles",
+    line: "Set the digital strategy for the global automaker through the merger that formed Stellantis.",
+  },
+  {
+    when: "2014 – 2019",
     role: "SVP & Chief Digital Officer",
-    org: "ZF Friedrichshafen AG",
+    org: "ZF Group · ZF TRW",
     line: "Digitalized a $43B supplier — 137,000 employees across 40 countries. Built ZF's innovation hubs in Silicon Valley and Hyderabad.",
   },
   {
-    when: "2013 – 2016",
-    role: "VP & Chief Information Officer",
+    when: "2010 – 2013",
+    role: "Corporate Officer, CIO & VP",
     org: "Consumers Energy",
     line: "The utility's first CIO. Helped reframe a regulated energy company as a customer-value enterprise.",
   },
   {
-    when: "2003 – 2013",
-    role: "Successive transformation roles",
+    when: "1996 – 2010",
+    role: "Successive IT & transformation roles",
     org: "Chrysler · DaimlerChrysler · Daimler Financial",
-    line: "The American foundation. The decade that built the operating instinct she would later scale.",
+    line: "Fourteen years across the American automotive foundation. The decade that built the operating instinct she would later scale.",
   },
 ];
 
@@ -559,19 +565,46 @@ export default function CeoFounderPage() {
               <Reveal delay={260}>
                 <div>
                   <p className="font-mono text-[11px] tracking-[0.28em] uppercase text-navy/50 mb-4">
-                    Board Service
+                    Board &amp; Advisory
                   </p>
-                  <ul className="flex flex-col gap-2">
+                  <ul className="flex flex-col gap-3">
                     {[
-                      "Champion X",
-                      "Health Alliance Plan of Michigan",
-                      "Gartner Research",
+                      {
+                        name: "Health Alliance Plan of Michigan",
+                        role: "Board of Directors",
+                        when: "2021 – Present",
+                      },
+                      {
+                        name: "Government of Telangana",
+                        role: "Industry Advisor",
+                        when: "2016 – Present",
+                      },
+                      {
+                        name: "ChampionX",
+                        role: "Board of Directors",
+                        when: "2018 – 2025",
+                      },
+                      {
+                        name: "Google Cloud Platform",
+                        role: "Advisory Board",
+                        when: "2019 – 2021",
+                      },
                     ].map((b) => (
                       <li
-                        key={b}
-                        className="text-[16px] text-navy/85 font-medium"
+                        key={b.name}
+                        className="flex items-baseline justify-between gap-4 border-b border-navy/[0.08] pb-2 last:border-b-0"
                       >
-                        {b}
+                        <span className="flex-1">
+                          <span className="text-[15px] text-navy font-semibold">
+                            {b.name}
+                          </span>
+                          <span className="block text-[13px] text-text-secondary italic mt-0.5">
+                            {b.role}
+                          </span>
+                        </span>
+                        <span className="font-mono text-[11px] tracking-[0.2em] text-orange whitespace-nowrap">
+                          {b.when}
+                        </span>
                       </li>
                     ))}
                   </ul>

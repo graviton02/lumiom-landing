@@ -6,11 +6,6 @@ import Link from "next/link";
 import {
   ArrowDown,
   ArrowRight,
-  Lightbulb,
-  Blocks,
-  Globe,
-  Server,
-  Building2,
   Activity,
   Eye,
   RefreshCw,
@@ -21,6 +16,9 @@ import {
   Gauge,
   Box,
   Compass,
+  Database,
+  HelpCircle,
+  AlertCircle,
 } from "lucide-react";
 import RequestDemoDialog from "@/components/RequestDemoDialog";
 import ContactDialog from "@/components/ContactDialog";
@@ -67,36 +65,21 @@ function Reveal({
 /* ─────────────────────────────────────────────
    Data
    ───────────────────────────────────────────── */
-const silos = [
+const problemCallouts = [
   {
-    label: "Strategy Consultants",
-    line: "Intelligence built, presented — then leaves.",
-    color: "#E86C3A",
-    icon: Lightbulb,
+    icon: Database,
+    title: "Data without context.",
+    body: "Every system has its own view. None has the whole picture.",
   },
   {
-    label: "System Integrators",
-    line: "Transformation knowledge lives in their methodology, not yours.",
-    color: "#8B6CC1",
-    icon: Blocks,
+    icon: HelpCircle,
+    title: "Insight without ownership.",
+    body: "Intelligence produced, presented — then lost to the next slide deck.",
   },
   {
-    label: "Business Process Outsourcing",
-    line: "Process knowledge dispersed to offshore centers.",
-    color: "#4A7DC7",
-    icon: Globe,
-  },
-  {
-    label: "IT Services",
-    line: "Systems knowledge held by the outsourcer, not the owner.",
-    color: "#2A9D8F",
-    icon: Server,
-  },
-  {
-    label: "The Enterprise",
-    line: "Holds the bill. Doesn't own the intelligence. Repeats the cycle.",
-    color: "#0F1729",
-    icon: Building2,
+    icon: AlertCircle,
+    title: "Action without accountability.",
+    body: "Decisions made in silos. Outcomes no one owns.",
   },
 ];
 
@@ -290,7 +273,7 @@ export default function Home() {
                 className="inline-flex items-center justify-center gap-2 px-7 py-3.5 border border-navy/10 text-navy text-[15px] font-semibold rounded-lg hover:bg-navy/[0.03] transition-all duration-300"
               >
                 <ArrowDown className="w-4 h-4" />
-                Read the Thesis
+                Point of View
               </a>
             </div>
           </div>
@@ -368,34 +351,36 @@ export default function Home() {
               </p>
             </Reveal>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-4">
-              {silos.map((silo, i) => {
-                const Icon = silo.icon;
+            <Reveal delay={240}>
+              <div className="relative w-full aspect-[16/9] rounded-2xl bg-white border border-black/[0.04] shadow-[0_1px_3px_rgba(0,0,0,0.03)] mb-12 overflow-hidden">
+                <Image
+                  src="/lumiom-problem-diagram.png"
+                  alt="The fragmented enterprise: five operating systems on the bottom, board-view outcomes on the top, with the enterprise intelligence layer missing in between."
+                  fill
+                  className="object-contain"
+                  sizes="(min-width: 1024px) 1000px, 90vw"
+                />
+              </div>
+            </Reveal>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-5">
+              {problemCallouts.map((c, i) => {
+                const Icon = c.icon;
                 return (
-                  <Reveal key={silo.label} delay={240 + i * 120}>
-                    <div className="relative bg-white rounded-xl p-7 pb-7 min-h-[220px] lg:min-h-[240px] flex flex-col border border-black/[0.04] shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
-                      <div
-                        className="absolute top-0 left-0 right-0 h-[3px] rounded-t-xl"
-                        style={{ backgroundColor: silo.color }}
-                      />
-                      <div
-                        className="w-11 h-11 rounded-lg flex items-center justify-center"
-                        style={{ backgroundColor: silo.color + "10" }}
-                      >
+                  <Reveal key={c.title} delay={340 + i * 120}>
+                    <div className="relative bg-white rounded-xl p-7 h-full flex flex-col border border-black/[0.04] shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+                      <div className="w-11 h-11 rounded-lg flex items-center justify-center bg-orange/[0.08] mb-5">
                         <Icon
-                          className="w-5 h-5"
-                          style={{ color: silo.color }}
+                          className="w-5 h-5 text-orange"
                           strokeWidth={1.8}
                         />
                       </div>
-                      <div className="mt-5">
-                        <p className="font-semibold text-navy text-[17px] mb-2 leading-tight">
-                          {silo.label}
-                        </p>
-                        <p className="text-text-secondary text-[14px] leading-relaxed">
-                          {silo.line}
-                        </p>
-                      </div>
+                      <p className="font-semibold text-navy text-[17px] mb-2 leading-tight">
+                        {c.title}
+                      </p>
+                      <p className="text-text-secondary text-[14px] leading-relaxed">
+                        {c.body}
+                      </p>
                     </div>
                   </Reveal>
                 );
@@ -655,42 +640,6 @@ export default function Home() {
         </section>
 
         {/* ═══════════════════════════════════════════
-            SECTION 8 — TESTIMONIAL
-            ═══════════════════════════════════════════ */}
-        <section className="relative py-20 md:py-24 lg:py-28 px-8 sm:px-12 md:px-16 lg:px-24 bg-cream">
-          <div className="max-w-3xl mx-auto">
-            <Reveal>
-              <div className="relative rounded-2xl border border-dashed border-navy/15 bg-white/60 p-8 md:p-10">
-                <span className="absolute top-4 right-4 inline-flex items-center gap-2 rounded-full border border-orange/30 bg-orange/10 px-3 py-1 font-mono text-[10px] uppercase tracking-[0.28em] text-orange">
-                  <span className="h-1 w-1 rounded-full bg-orange" />
-                  Testimonials
-                  <span className="h-1 w-1 rounded-full bg-orange" />
-                </span>
-
-                <p className="font-mono text-[11px] tracking-[0.28em] text-navy/40 uppercase mb-5">
-                  Early Partner
-                </p>
-
-                <blockquote className="font-serif text-[22px] sm:text-[26px] md:text-[28px] leading-[1.3] text-navy/85 italic">
-                  &ldquo;Lumiom helped me build the first AI strategy for my
-                  enterprise&nbsp;&mdash; and we are now piloting v1 of the
-                  Lumiom platform together.&rdquo;
-                </blockquote>
-
-                <div className="mt-6">
-                  <p className="text-[15px] font-semibold text-navy/45">
-                    [ Name &mdash; pending approval ]
-                  </p>
-                  <p className="text-[13px] text-navy/35 mt-0.5">
-                    [ Title &middot; Organization &mdash; pending approval ]
-                  </p>
-                </div>
-              </div>
-            </Reveal>
-          </div>
-        </section>
-
-        {/* ═══════════════════════════════════════════
             SECTION 9 — FINAL CTA
             ═══════════════════════════════════════════ */}
         <section className="relative py-24 md:py-28 px-8 sm:px-12 md:px-16 lg:px-24 bg-warm-white">
@@ -719,7 +668,7 @@ export default function Home() {
                 onClick={openDemo}
                 className="inline-flex items-center gap-2.5 px-9 py-4 bg-orange text-white text-[16px] font-semibold rounded-lg hover:bg-orange-light transition-all duration-300 shadow-[0_4px_24px_rgba(232,108,58,0.32)] hover:shadow-[0_6px_32px_rgba(232,108,58,0.45)] hover:-translate-y-px"
               >
-                Request a Demo Customized to Your Enterprise
+                Request a Demo
                 <ArrowRight className="w-4 h-4" />
               </button>
             </Reveal>
